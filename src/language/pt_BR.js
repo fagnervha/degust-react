@@ -1222,6 +1222,7 @@ export const portuguese = {
   "delivery man-info": "Dados do Entregador",
   "Enter Amount": "Digite o valor",
   "Order date:": "Data do pedido:",
-  "Order Id:": "Pedido Id",
+  "Order ID:": "Pedido Id",
   "Order OTP": "Pedido OTP",
+  "Order placed": "Pedido realizado",
 };
