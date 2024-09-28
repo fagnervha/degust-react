@@ -1224,5 +1224,6 @@ export const portuguese = {
   "Order date:": "Data do pedido:",
   "Order ID:": "Pedido Id",
   "Order OTP": "Pedido OTP",
-  "Order placed": "Pedido realizado",
+  "Order Placed": "Pedido Realizado",
+  "Order confirmed": "Pedido Confirmado",
 };
