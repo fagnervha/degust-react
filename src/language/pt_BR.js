@@ -22,8 +22,8 @@ export const portuguese = {
   "Extra Packaging": "Extra Packaging",
   "Delete your account": "Delete your account",
   "Track Your Order": "Track Your Order",
-  "Enter your order id": "Enter your order id",
-  "Search Order": "Search Order",
+  "Enter your order id": "Digite o ID do pedido",
+  "Search Order": "Buscar Pedido",
   "Note Please upload a doctor verified prescription and you can upload jpg, Png":
     "Note : Please upload a doctor" +
     " verified prescription and you can upload jpg, Png",
@@ -1182,7 +1182,7 @@ export const portuguese = {
   "No Orders Found": "Nenhum Pedido Encontrado",
   "Receiver Details": "Detalhes do Destinatário",
   "Sender Details": "Detalhes do Remetente",
-  "Charge Pay By": "Charge Pay By",
+  "Charge Pay By": "Quem pagará",
   Payment: "Pagamento",
   Summary: "Resumo",
   "No delivery man assigned": "Nenhum entregador atribuído",
@@ -1222,6 +1222,6 @@ export const portuguese = {
   "delivery man-info": "Dados do Entregador",
   "Enter Amount": "Digite o valor",
   "Order date:": "Data do pedido:",
-  "Order Id": "Pedido Id",
+  "Order Id:": "Pedido Id",
   "Order OTP": "Pedido OTP",
 };
