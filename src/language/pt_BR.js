@@ -5,8 +5,8 @@ export const portuguese = {
   "Whats New": "Novidades",
   "Cash On Delivery": "Cash On Delivery",
   "Your account is inactive or Your token has been expired":
-    "Your account is inactive or Your token has been expired",
-  "prescription is required": "prescription is required",
+    "Sua conta está inativa ou seu token expirou",
+  "prescription is required": "Receita médica é obrigatória",
   "After completing the order, you will receive a":
     "After completing the order, you will receive a",
   "Welcome to 6amMart!": "Welcome to 6amMart!",
@@ -47,7 +47,7 @@ export const portuguese = {
   "Has  paid by your wallet.": "Has  paid by your wallet.",
   "Wallet Payment": "Wallet Payment",
   "Track your Products": "Rastreie seus Produtos",
-  "Start a new message": "Start a new message",
+  "Start a new message": "Iniciar uma nova mensagem",
   "Do you want to use now?": "Do you want to use now?",
   "Choose Payment Method": "Choose Payment Method",
   "(Choose Payment Method)": "(Choose Payment Method)",
@@ -56,7 +56,7 @@ export const portuguese = {
   "Paid by wallet": "Paid by wallet",
   "Now you can track your products easily whenever you want.":
     "Agora você pode rastrear seus produtos facilmente sempre que quiser.",
-  "Label As": "Identificar Como",
+  "Label As": "Tipo de Endereço",
   "out of limits": "out of limits",
   "You have balance in  your wallet": "You have balance in  your wallet",
   "Personal Details": "Dados Pessoais",
@@ -462,7 +462,7 @@ export const portuguese = {
   " Add new address": " Add new address",
   "Add new address +": "Add new address +",
   " Add New +": " Add New +",
-  "Address Type": "Address Type",
+  "Address Type": "Tipo de Endereço",
   "Newly Joined": "Novos",
 
   New: "New",
