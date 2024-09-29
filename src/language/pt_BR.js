@@ -140,7 +140,7 @@ export const portuguese = {
   Other: "Outro",
   "Charge Paid By": "Charge Paid By",
   "Faster and safer way to send money": "Faster and safer way to send money",
-  Send: "Send",
+  Send: "Enviar",
 
   "Confirm Parcel Request": "Confirm Parcel Request",
   "All Stores": "Todas as Lojas",
@@ -825,9 +825,8 @@ export const portuguese = {
   "Submit Refund Request": "Submit Refund Request",
   Note: "Note",
   "Please select a reason": "Please select a reason",
-  "Maximum 3 images can be send at a time.":
-    "Maximum 3 images can be send at a time.",
-  "Attach photo": "Attach photo",
+  "Maximum 3 images can be send at a time.": "No máximo 3 imagens podem ser enviadas por vez.",
+  "Attach photo": "Anexar foto",
   "No saved addresses found to select.": "No saved addresses found to select.",
   "Deliveryman Registration": "Deliveryman Registration",
   foods: "foods",
@@ -1078,9 +1077,8 @@ export const portuguese = {
   "Get your recent food from the restaurant you recently visited":
     "Get your recent food from the restaurant you recently visited",
   "Special Food Offers": "Special Food Offers",
-  "Sorry no data found related to your search":
-    "Sorry no data found related to your search",
-  "Items not found!": "Items not found!",
+  "Sorry no data found related to your search": "Sorry no data found related to your search",
+  "Items not found!": "Itens não encontrados!",
   "Stores not found!": "Lojas não encontradas!",
   "More From This Store!": "More From This Store!",
   "Product Details": "Detalhes Do Produto",
@@ -1101,8 +1099,8 @@ export const portuguese = {
   "Offline Payment! Now, with just a click of a button, you can make secure transactions. It's simple, convenient, and reliable.":
     "Offline Payment! Now, with just a click of a button, you can make secure transactions. It's simple, convenient, and reliable.",
   "Payment Info": "Payment Info",
-  "% discount": "% discount",
-  discount: "discount",
+  "% discount": "% desconto",
+  discount: "desconto",
   "min Order of": "min Order of",
   "Select option from below": "Select option from below",
   "Pay your bill using any of the payment method below and input the required information in the form":
@@ -1138,22 +1136,20 @@ export const portuguese = {
   "Please enter your contact info": "Please enter your contact info",
   "Please select a paymrnt method": "Please select a paymrnt method",
   "Delete your account ?": "Excluir sua conta ?",
-  "Sorry you can’t delete your account !":
-    "Sorry you can’t delete your account !",
-  "You won’t be able to recover your data again":
-    "You won’t be able to recover your data again",
+  "Sorry you can’t delete your account !": "Desculpe, mas não é possível excluir sua conta!",
+  "You won’t be able to recover your data again": "Você não poderá recuperar seus dados novamente",
   "Please complete your ongoing orders and ":
     "Please complete your ongoing orders and ",
   Remove: "Remove",
   "View My Orders": "Ver Meus Pedidos",
   "OR SHARE": "OU COMPARTILHE",
-  "Hey there welcome to ": "Hey there welcome to ",
+  "Hey there welcome to ": "Olá, bem-vindo(a) ao ",
   "If you're checking out": "If you're checking out",
   "for the first time, make sure to use the referral code":
     "for the first time, make sure to use the referral code",
   "when you sign up. It's my way of welcoming you to this awesome e-commerce platform! Happy shopping on":
-    "when you sign up. It's my way of welcoming you to this awesome e-commerce platform! Happy shopping on",
-  "Hey there welcome to": "Hey there welcome to",
+    "quando você se registrar. É a minha maneira de lhe dar as boas-vindas a essa incrível plataforma! Boas compras em",
+  "Hey there welcome to": "Olá, bem-vindio(a) ao",
   "Someone just used  your code !": "Someone just used  your code !",
   "Be prepare to receive when they complete there first purchase":
     "Be prepare to receive when they complete there first purchase",
