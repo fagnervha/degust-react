@@ -22,7 +22,12 @@ const ModuleModal = (props) => {
   return (
     <>
       {productDetailsData && (
-        <Modal open={open} onClose={handleModalClose} disableAutoFocus={true}>
+        <Modal
+          open={open}
+          onClose={handleModalClose}
+          disableAutoFocus={true}
+          sx={{ top: { xs: "-20%", sm: "-15%" } }}
+        >
           <FoodDetailModalStyle sx={{ bgcolor: "background.paper" }}>
             <CustomStackFullWidth
               direction="row"
@@ -48,7 +53,7 @@ const ModuleModal = (props) => {
                 <CloseIcon sx={{ fontSize: "16px", fontWeight: "700" }} />
               </IconButton>
             </CustomStackFullWidth>
-            <Scrollbar style={{ maxHeight: "80vh" }}>
+            <Scrollbar style={{ maxHeight: "65vh" }}>
               <ProductDetailsSection
                 productDetailsData={productDetailsData}
                 configData={configData}

@@ -1,26 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 
-// import CustomModal from "../../../custom-modal/CustomModal";
-// import PhoneInputForm from "./PhoneInputForm";
-// import OtpForm from "../../forgot-password/OtpForm";
-import { toast } from "react-hot-toast";
-// import { useVerifyPhone } from "../../../../hooks/react-query/otp/useVerifyPhone";
-import { usePostEmail } from "api-manage/hooks/react-query/social-login/useEmailPost";
-import CustomModal from "../../../modal";
-import PhoneInputForm from "./PhoneInputForm";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
-import OtpForm from "../../sign-up/OtpForm";
+import { useFireBaseOtpVerify } from "api-manage/hooks/react-query/forgot-password/useFIreBaseOtpVerify";
 import { useVerifyPhone } from "api-manage/hooks/react-query/forgot-password/useVerifyPhone";
-import { google_client_id } from "utils/staticCredential";
-import ModalCustom from "./ModalCustom";
+import { usePostEmail } from "api-manage/hooks/react-query/social-login/useEmailPost";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { getLanguage } from "helper-functions/getLanguage";
+import { toast } from "react-hot-toast";
+import { google_client_id } from "utils/staticCredential";
+import { auth } from "../../../../firebase";
+import CustomModal from "../../../modal";
+import OtpForm from "../../sign-up/OtpForm";
+import ModalCustom from "./ModalCustom";
+import PhoneInputForm from "./PhoneInputForm";
 
-// import { gapi } from 'gapi-scrip
-// import { gapi } from 'gapi-script'
 const GoogleLoginComp = (props) => {
-  const { handleSuccess, configData, handleParentModalClose } = props;
+  const { handleSuccess, configData } = props;
   const [userInfo, setUserInfo] = useState(null);
   const [jwtToken, setJwtToken] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -28,15 +25,16 @@ const GoogleLoginComp = (props) => {
   const [otpData, setOtpData] = useState({ phone: "" });
   const [mainToken, setMainToken] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [verificationId, setVerificationId] = useState(null);
+  const [phone, setPhone] = useState("");
   const buttonDiv = useRef(null);
   const router = useRouter();
 
   const { mutate } = usePostEmail();
-
   const clientId = google_client_id;
-  const handleToken = (response) => {
-    if (response?.token) {
-      handleSuccess(response.token);
+  const handleToken = (token) => {
+    if (token) {
+      handleSuccess(token);
     } else {
       setOpenModal(true);
     }
@@ -47,20 +45,62 @@ const GoogleLoginComp = (props) => {
     }
   }, [otpData]);
 
-  const handlePostRequestOnSuccess = (response) => {
+  const setUpRecaptcha = () => {
+    // Check if reCAPTCHA is already initialized
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("Recaptcha verified", response);
+          },
+          "expired-callback": () => {
+            window.recaptchaVerifier?.reset();
+          },
+        },
+        auth
+      );
+    } else {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier?.reset?.();
+      }
+    }
+  };
+
+  const sendOTP = (token, phone) => {
+    setUpRecaptcha();
+    const appVerifier = window.recaptchaVerifier;
+    signInWithPhoneNumber(auth, phone, appVerifier)
+      .then((confirmationResult) => {
+        setVerificationId(confirmationResult.verificationId);
+        setOtpData({ phone: phone });
+        setMainToken(token);
+      })
+      .catch((error) => {
+        console.log("Error in sending OTP", error);
+      });
+  };
+
+  const handlePostRequestOnSuccess = async (response) => {
     if (configData?.customer_verification) {
-      if (Number.parseInt(response?.is_phone_verified) === 1) {
-        handleToken(response);
-      } else {
-        if (response?.phone) {
-          setOtpData({ phone: response?.phone });
+      if (configData?.firebase_otp_verification === 1) {
+        if (Number.parseInt(response?.is_phone_verified) === 1) {
+          await handleToken(response?.token);
+        } else {
+          setOpenModal(true);
         }
-        if (response?.token) {
-          setMainToken(response);
+      } else {
+        if (Number.parseInt(response?.is_phone_verified) === 1) {
+          await handleToken(response?.token);
+        } else {
+          setOtpData({ phone: phone });
+          setMainToken(response?.token);
+          setOpenModal(true);
         }
       }
     } else {
-      handleToken(response);
+      handleToken(response?.token);
     }
   };
   const handleCallBackResponse = (res) => {
@@ -85,20 +125,8 @@ const GoogleLoginComp = (props) => {
       }
     );
   };
-  const handleTokenCallBackResponse = (res) => {
-    //const userObj = jwt_decode(res.credential)
-    // setJwtToken(res)
-    // setUserInfo(userObj)
-    // mutate(
-    //     { email: userObj.email },
-    //     {
-    //         onSuccess: handlePostRequestOnSuccess,
-    //     }
-    // )
-  };
 
   useEffect(() => {
-    /* global google */
     const initializeGoogleSignIn = () => {
       window?.google?.accounts?.id?.initialize({
         client_id: clientId,
@@ -111,7 +139,6 @@ const GoogleLoginComp = (props) => {
     }
   }, [clientId, isInitialized]);
   useEffect(() => {
-    /* global google */
     if (isInitialized && buttonDiv.current) {
       window?.google?.accounts?.id?.renderButton(buttonDiv.current, {
         theme: "outline",
@@ -120,24 +147,61 @@ const GoogleLoginComp = (props) => {
       });
     }
   }, [isInitialized]);
-  const handleRegistrationOnSuccess = (token) => {
-    //registration on success func remaining
+  const handleRegistrationOnSuccess = async (
+    token,
+    is_phone_verified,
+    phone
+  ) => {
+    setPhone(phone);
     setOpenModal(false);
-    handleSuccess(token);
-    handleParentModalClose();
+    setMainToken(token);
+
+    if (configData?.customer_verification) {
+      if (configData?.firebase_otp_verification === 1) {
+        if (Number.parseInt(is_phone_verified) === 1) {
+          handleSuccess(token);
+        } else {
+          await sendOTP(token, phone);
+        }
+      } else {
+        if (Number.parseInt(is_phone_verified) === 1) {
+          handleSuccess(token);
+        } else {
+          setOtpData({ phone: phone });
+        }
+      }
+    } else {
+      handleSuccess(token);
+    }
   };
-  const onSuccessHandler = (res) => {
+
+  const { mutate: signInMutate, isLoading } = useVerifyPhone();
+  const { mutate: fireBaseOtpMutation, isLoading: fireIsLoading } =
+    useFireBaseOtpVerify();
+
+  const onSuccessHandlerOtp = async (res) => {
     toast.success(res?.message);
     setOpenOtpModal(false);
-    handleToken(mainToken);
-    handleParentModalClose();
+    setOpenModal(false);
+    await handleSuccess(mainToken);
   };
-  const { mutate: signInMutate, isLoading } = useVerifyPhone();
   const formSubmitHandler = (values) => {
-    signInMutate(values, {
-      onSuccess: onSuccessHandler,
-      onError: onErrorResponse,
-    });
+    if (configData?.firebase_otp_verification === 1) {
+      const temValue = {
+        phoneNumber: values?.phone,
+        sessionInfo: verificationId,
+        code: values?.reset_token,
+      };
+      fireBaseOtpMutation(temValue, {
+        onSuccess: onSuccessHandlerOtp,
+        onError: onErrorResponse,
+      });
+    } else {
+      signInMutate(values, {
+        onSuccess: onSuccessHandlerOtp,
+        onError: onErrorResponse,
+      });
+    }
   };
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
   return (

@@ -1,17 +1,5 @@
-import React, { useRef, useState } from "react";
-import {
-  CustomFormControlLabel,
-  CustomStackFullWidth,
-} from "styled-components/CustomStyles.style";
-import PaymentMethodCard from "../PaymentMethodCard";
-import { t } from "i18next";
-import cashOnDelivery from "../assets/cod2.svg";
-import wallet from "../assets/wallet.svg";
+import InfoIcon from "@mui/icons-material/Info";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { CustomButtonStack, DeliveryCaption } from "../CheckOut.style";
-import SimpleBar from "simplebar-react";
-import { getToken } from "helper-functions/getToken";
-import { alpha } from "@mui/system";
 import {
   Box,
   Button,
@@ -20,20 +8,32 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  styled,
   Tooltip,
   Typography,
+  styled,
   useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/system";
+import CustomImageContainer from "components/CustomImageContainer";
+import { getToken } from "helper-functions/getToken";
+import { t } from "i18next";
+import { useRouter } from "next/router";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import InfoIcon from "@mui/icons-material/Info";
 import {
   setOfflineInfoStep,
   setOfflineMethod,
 } from "redux/slices/offlinePaymentData";
-import { useRouter } from "next/router";
+import SimpleBar from "simplebar-react";
+import {
+  CustomFormControlLabel,
+  CustomStackFullWidth,
+} from "styled-components/CustomStyles.style";
+import { CustomButtonStack, DeliveryCaption } from "../CheckOut.style";
+import PaymentMethodCard from "../PaymentMethodCard";
 import OfflinePaymentIcon from "../assets/OfflinePaymentIcon";
-import CustomImageContainer from "components/CustomImageContainer";
+import cashOnDelivery from "../assets/cod2.svg";
+import wallet from "../assets/wallet.svg";
 
 const OfflineButton = styled(Button)(({ theme, value, paymentMethod }) => ({
   padding: "15px 15px",
@@ -67,6 +67,7 @@ const ParcelPaymentMethod = (props) => {
     parcel,
     offlinePaymentOptions,
     setPaymentMethodImage,
+    getParcelPayment,
   } = props;
   const token = getToken();
   const router = useRouter();
@@ -97,7 +98,10 @@ const ParcelPaymentMethod = (props) => {
     // dispatch(setOfflineInfoStep(2));
     //  router.push("/checkout?page=offline", undefined, { shallow: true });
     router.push(
-      { pathname: "/checkout", query: { page: "parcel", method: "offline" } },
+      {
+        pathname: "/checkout",
+        query: { page: "parcel", method: "offline" },
+      },
       undefined,
       { shallow: true }
     );
@@ -105,7 +109,7 @@ const ParcelPaymentMethod = (props) => {
 
   return (
     <CustomStackFullWidth justifyContent="space-between" spacing={1}>
-      <Stack alignItems="center" gap="10px">
+      <Stack alignItems="center" gap="10px" flexWrap="wrap">
         <DeliveryCaption parcel={parcel}>{t("Payment Method")}</DeliveryCaption>
         <Typography color={theme.palette.neutral[400]}>
           {t("Select a Payment Method to Proceed")}
@@ -129,51 +133,52 @@ const ParcelPaymentMethod = (props) => {
             <>
               <Grid container spacing={2}>
                 <Grid item spacing={3} xs={12} sm={6}>
-                  {zoneData?.data?.zone_data?.[0]?.cash_on_delivery && (
-                    <CustomStackFullWidth
-                      flexDirection="row"
-                      alignItems="center"
-                      padding="14px 9px"
-                      gap="10px"
-                      sx={{
-                        backgroundColor:
-                          paymentMethod === "cash_on_delivery" &&
-                          alpha(theme.palette.primary.main, 0.1),
-                        border:
-                          paymentMethod === "cash_on_delivery"
-                            ? `1px solid ${alpha(
-                                theme.palette.secondary.light,
-                                0.3
-                              )}`
-                            : `1px solid ${alpha(
-                                theme.palette.neutral[400],
-                                0.3
-                              )}`,
-                        borderRadius: "10px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => setPaymentMethod("cash_on_delivery")}
-                    >
-                      <Stack
-                        width="32px"
-                        height="32px"
-                        justifyContent="center"
+                  {configData?.cash_on_delivery &&
+                    getParcelPayment()[0]?.cash_on_delivery && (
+                      <CustomStackFullWidth
+                        flexDirection="row"
                         alignItems="center"
-                        backgroundColor={theme.palette.primary.main}
-                        borderRadius="50%"
+                        padding="14px 9px"
+                        gap="10px"
+                        sx={{
+                          backgroundColor:
+                            paymentMethod === "cash_on_delivery" &&
+                            alpha(theme.palette.primary.main, 0.1),
+                          border:
+                            paymentMethod === "cash_on_delivery"
+                              ? `1px solid ${alpha(
+                                  theme.palette.secondary.light,
+                                  0.3
+                                )}`
+                              : `1px solid ${alpha(
+                                  theme.palette.neutral[400],
+                                  0.3
+                                )}`,
+                          borderRadius: "10px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => setPaymentMethod("cash_on_delivery")}
                       >
-                        <CustomImageContainer
-                          width="22px"
-                          height="22px"
-                          objectfit="contain"
-                          src={cashOnDelivery.src}
-                        />
-                      </Stack>
-                      <Typography color="neutral[400]">
-                        {t("Cash on delivery")}
-                      </Typography>
-                    </CustomStackFullWidth>
-                  )}
+                        <Stack
+                          width="32px"
+                          height="32px"
+                          justifyContent="center"
+                          alignItems="center"
+                          backgroundColor={theme.palette.primary.main}
+                          borderRadius="50%"
+                        >
+                          <CustomImageContainer
+                            width="22px"
+                            height="22px"
+                            objectfit="contain"
+                            src={cashOnDelivery.src}
+                          />
+                        </Stack>
+                        <Typography color="neutral[400]">
+                          {t("Cash on delivery")}
+                        </Typography>
+                      </CustomStackFullWidth>
+                    )}
                 </Grid>
                 <Grid item spacing={3} xs={12} sm={6}>
                   {configData?.customer_wallet_status === 1 &&
@@ -240,10 +245,10 @@ const ParcelPaymentMethod = (props) => {
                   </Stack>
                 )}
 
-                {zoneData?.data?.zone_data?.[0]?.digital_payment &&
-                  paidBy !== "receiver" &&
+                {paidBy !== "receiver" &&
                   forprescription !== "true" &&
-                  configData?.digital_payment_info?.digital_payment && (
+                  configData?.digital_payment_info?.digital_payment &&
+                  getParcelPayment()[0]?.digital_payment && (
                     <>
                       {configData?.active_payment_method_list?.map(
                         (item, index) => {
@@ -252,7 +257,7 @@ const ParcelPaymentMethod = (props) => {
                               key={index}
                               parcel={parcel}
                               paymentType={item?.gateway_title}
-                              image={item?.gateway_image}
+                              image={item?.gateway_image_full_url}
                               paymentMethod={paymentMethod}
                               setPaymentMethod={setPaymentMethod}
                               setIsCheckedOffline={setIsCheckedOffline}
@@ -274,7 +279,7 @@ const ParcelPaymentMethod = (props) => {
               </Stack>
             </>
             <Stack pb="20px">
-              {zoneData?.data?.zone_data?.[0]?.offline_payment &&
+              {getParcelPayment()[0]?.offline_payment &&
               typeof offlinePaymentOptions !== "undefined" &&
               Object?.keys(offlinePaymentOptions)?.length !== 0 &&
               configData?.offline_payment_status === 1 &&
@@ -306,7 +311,12 @@ const ParcelPaymentMethod = (props) => {
                             value="Pay Offline"
                             control={
                               <Radio
-                                sx={{ padding: { xs: "2px", md: "10px" } }}
+                                sx={{
+                                  padding: {
+                                    xs: "2px",
+                                    md: "10px",
+                                  },
+                                }}
                                 checked={isCheckedOffline}
                                 onClick={handleClickOffline}
                               />
@@ -343,7 +353,9 @@ const ParcelPaymentMethod = (props) => {
                       >
                         <InfoIcon
                           fontSize="16px"
-                          sx={{ color: theme.palette.primary.main }}
+                          sx={{
+                            color: theme.palette.primary.main,
+                          }}
                         />
                       </Tooltip>
                     </CustomStackFullWidth>

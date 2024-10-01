@@ -13,6 +13,7 @@ import Banners from "./Banners";
 import { NoSsr, useMediaQuery, useTheme } from "@mui/material";
 import DiscountBanner from "./DiscountBanner";
 import CookiesConsent from "../CookiesConsent";
+import AvailableZoneSection from "components/landing-page/AvailableZoneSection";
 
 const LandingPage = ({ configData, landingPageData }) => {
   const Testimonials = dynamic(() => import("./Testimonials"), {
@@ -74,6 +75,11 @@ const LandingPage = ({ configData, landingPageData }) => {
           configData={configData}
           landingPageData={landingPageData}
         />
+        {landingPageData?.available_zone_status === 1 &&
+          landingPageData?.available_zone_list?.length > 0 && (
+            <AvailableZoneSection landingPageData={landingPageData} />
+          )}
+
         {(landingPageData?.earning_title ||
           landingPageData?.earning_sub_title ||
           landingPageData?.earning_seller_title ||

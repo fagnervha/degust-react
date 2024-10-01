@@ -116,3 +116,6 @@ export const cashback_amount = "api/v1/cashback/getCashback";
 export const brand_list = "api/v1/brand";
 export const brand_products = "api/v1/brand/items/";
 export const visit_again = "api/v1/customer/visit-again";
+export const paid_ads = "api/v1/advertisement/list";
+export const firebase_otp = "api/v1/auth/firebase-verify-token";
+export const automated_message = "api/v1/customer/automated-message";

@@ -520,19 +520,26 @@ export const CustomList = styled(List)(({ theme, border }) => ({
   paddingTop: "0px",
 }));
 export const SliderCustom = styled(Stack)(
-  ({ theme, language_direction, nopadding, paddingBottom }) => ({
+  ({
+    float,
+    theme,
+    language_direction,
+    nopadding,
+    paddingBottom,
+    padding,
+  }) => ({
     position: "relative",
     width: "100%",
     paddingY: "10px",
     "& .slick-slider": {
       "& .slick-slide": {
-        padding: "6px",
+        padding: padding ?? "6px",
       },
       "& .slick-list": {
         paddingY: nopadding !== "true" && "8px",
         //paddingBottom: "1rem !important",
         "& .slick-track": {
-          float: theme.direction === "ltr" ? "left" : "right",
+          float: float ? float : theme.direction === "ltr" ? "left" : "right",
           gap: "5px",
           //paddingBottom: paddingBottom && "1rem !important",
         },
@@ -573,8 +580,8 @@ export const customScrollBar = styled(Stack)(({ theme, height }) => ({
 export const CustomTypographyGray = styled(Typography)(
   ({ theme, nodefaultfont, textdecoration }) => ({
     color: theme.palette.neutral[400],
-    fontWeight: "bold",
-    fontSize: nodefaultfont !== "true" && "1rem",
+    fontWeight: "normal",
+    fontSize: nodefaultfont !== "true" && "14px",
     textDecoration: textdecoration,
   })
 );

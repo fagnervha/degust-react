@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   FormControlLabel,
   NoSsr,
@@ -8,46 +7,49 @@ import {
   useTheme,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CustomPaperBigCard,
   CustomStackFullWidth,
   CustomTypographyGray,
-} from "../../../styled-components/CustomStyles.style";
+} from "styled-components/CustomStyles.style";
 
 import { t } from "i18next";
 import { CustomTypography } from "../../landing-page/hero-section/HeroSection.style";
 import SignInForm from "./SignInForm";
 // import AcceptTermsAndConditions from "../../../../pages/auth/AcceptTermsAndConditions";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
+import { useSignIn } from "api-manage/hooks/react-query/auth/useSignIn";
+import { useFireBaseOtpVerify } from "api-manage/hooks/react-query/forgot-password/useFIreBaseOtpVerify";
+import { useVerifyPhone } from "api-manage/hooks/react-query/forgot-password/useVerifyPhone";
+import { useWishListGet } from "api-manage/hooks/react-query/wish-list/useWishListGet";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useFormik } from "formik";
+import { getGuestId } from "helper-functions/getToken";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
-import { useSignIn } from "api-manage/hooks/react-query/auth/useSignIn";
-import { useVerifyPhone } from "api-manage/hooks/react-query/forgot-password/useVerifyPhone";
-import useGetProfile from "../../../api-manage/hooks/react-query/profile/useGetProfile";
-import { useWishListGet } from "api-manage/hooks/react-query/wish-list/useWishListGet";
+import { setCartList } from "redux/slices/cart";
 import { setUser } from "redux/slices/profileInfo";
 import { setWishList } from "redux/slices/wishList";
+import { handleProductValueWithOutDiscount } from "utils/CustomFunctions";
 import {
   loginSuccessFull,
   moduleSelected,
   SigninSuccessFull,
 } from "utils/toasterMessages";
+import useGetAllCartList from "../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import useGetProfile from "../../../api-manage/hooks/react-query/profile/useGetProfile";
+import { auth } from "../../../firebase"; // Import the Firebase auth instance
+import { getSelectedVariations } from "../../header/second-navbar/SecondNavbar";
 import { ModuleSelection } from "../../landing-page/hero-section/module-selection";
 import CustomModal from "../../modal";
 import AuthHeader from "../AuthHeader";
 import OtpForm from "../sign-up/OtpForm";
 import SignUpValidation from "./SignInValidation";
 import SocialLogins from "./social-login/SocialLogins";
-import useGetAllCartList from "../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
-import { setCartList } from "redux/slices/cart";
-import { getGuestId } from "helper-functions/getToken";
-import { handleProductValueWithOutDiscount } from "utils/CustomFunctions";
-import { getSelectedVariations } from "../../header/second-navbar/SecondNavbar";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   "&:hover": {
@@ -67,6 +69,8 @@ const SignIn = ({ configData }) => {
   const [isApiCalling, setIsApiCalling] = useState(false);
   const [isRemember, setIsRemember] = useState(false);
   const theme = useTheme();
+  const [verificationId, setVerificationId] = useState(null);
+
   const textColor = theme.palette.whiteContainer.main;
   let userDatafor = undefined;
   if (typeof window !== "undefined") {
@@ -74,6 +78,62 @@ const SignIn = ({ configData }) => {
   }
   const getModule = () => {
     return JSON.parse(window.localStorage.getItem("module"));
+  };
+  const loginFormik = useFormik({
+    initialValues: {
+      phone: userDatafor ? userDatafor.phone : "",
+      password: userDatafor ? userDatafor.password : "",
+      tandc: false,
+    },
+    validationSchema: SignUpValidation(),
+    onSubmit: async (values, helpers) => {
+      try {
+        if (isRemember) {
+          localStorage.setItem("userDatafor", JSON.stringify(values));
+        }
+        formSubmitHandler(values);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  });
+
+  const setUpRecaptcha = () => {
+    // Check if reCAPTCHA is already initialized
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("Recaptcha verified", response);
+          },
+          "expired-callback": () => {
+            window.recaptchaVerifier?.reset?.();
+          },
+        },
+        auth
+      );
+    } else {
+      // Only reset without re-initializing
+      window.recaptchaVerifier?.reset?.();
+    }
+  };
+
+  const sendOTP = (response) => {
+    setUpRecaptcha();
+    const phoneNumber = loginFormik?.values?.phone;
+    // country code
+    const appVerifier = window.recaptchaVerifier;
+    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+      .then((confirmationResult) => {
+        setVerificationId(confirmationResult.verificationId);
+        setOtpData({ phone: phoneNumber });
+        setMainToken(response);
+      })
+      .catch((error) => {
+        console.log("Error in sending OTP", error);
+      });
   };
   const cartListSuccessHandler = (res) => {
     if (res) {
@@ -105,24 +165,6 @@ const SignIn = ({ configData }) => {
     //handleClose()
   };
 
-  const loginFormik = useFormik({
-    initialValues: {
-      phone: userDatafor ? userDatafor.phone : "",
-      password: userDatafor ? userDatafor.password : "",
-      tandc: false,
-    },
-    validationSchema: SignUpValidation(),
-    onSubmit: async (values, helpers) => {
-      try {
-        if (isRemember) {
-          localStorage.setItem("userDatafor", JSON.stringify(values));
-        }
-        formSubmitHandler(values);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-  });
   let location = undefined;
   let isModuleSelected = undefined;
   let lanDirection = undefined;
@@ -159,12 +201,21 @@ const SignIn = ({ configData }) => {
   const { refetch: wishlistRefetch, isLoading: isLoadingWishlist } =
     useWishListGet(onSuccessHandler);
   const handleTokenAfterSignIn = async (response) => {
-    if (response?.data) {
-      localStorage.setItem("token", response?.data?.token);
+    if (response) {
+      localStorage.setItem("token", response?.token);
       await wishlistRefetch();
       await profileRefetch();
       await cartListRefetch();
       toast.success(t(loginSuccessFull));
+      if (previousRouteName) {
+        router.push("/home");
+      } else if (previousRouteName === "/order") {
+        router.push("/home");
+      } else if (previousRouteName === "/forgot-password") {
+        router.push("/home");
+      } else {
+        await router.back();
+      }
     }
   };
 
@@ -189,8 +240,6 @@ const SignIn = ({ configData }) => {
           await router.back();
         }
       }
-      // dispatch(setToken(response?.data?.token));
-      // router.push("/");
     }
   };
   const handleCloseModuleModal = (item) => {
@@ -219,8 +268,13 @@ const SignIn = ({ configData }) => {
           if (Number.parseInt(response?.is_phone_verified) === 1) {
             await handleTokenAfterSignUp(response);
           } else {
-            setOtpData({ phone: values?.phone });
-            setMainToken(response);
+            if (configData?.firebase_otp_verification === 1) {
+              await sendOTP(response);
+            } else {
+              //
+              setOtpData({ phone: values?.phone });
+              setMainToken(response);
+            }
           }
         } else {
           await handleTokenAfterSignUp(response);
@@ -232,16 +286,32 @@ const SignIn = ({ configData }) => {
 
   const { mutate: otpVerifyMutate, isLoading: isLoadingOtpVerifyApi } =
     useVerifyPhone();
+  const { mutate: fireBaseOtpMutation, isLoading: fireIsLoading } =
+    useFireBaseOtpVerify();
+
+  const onSuccessHandlerOtp = async (res) => {
+    toast.success(res?.message);
+    setOpenOtpModal(false);
+    await handleTokenAfterSignIn(mainToken);
+  };
+
   const otpFormSubmitHandler = (values) => {
-    const onSuccessHandler = (res) => {
-      toast.success(res?.message);
-      setOpenOtpModal(false);
-      handleTokenAfterSignIn(mainToken);
-    };
-    otpVerifyMutate(values, {
-      onSuccess: onSuccessHandler,
-      onError: onErrorResponse,
-    });
+    if (configData?.firebase_otp_verification === 1) {
+      const temValue = {
+        phoneNumber: values?.phone,
+        sessionInfo: verificationId,
+        code: values?.reset_token,
+      };
+      fireBaseOtpMutation(temValue, {
+        onSuccess: onSuccessHandlerOtp,
+        onError: onErrorResponse,
+      });
+    } else {
+      otpVerifyMutate(values, {
+        onSuccess: onSuccessHandlerOtp,
+        onError: onErrorResponse,
+      });
+    }
   };
 
   const handleFormBasedOnDirection = () => (
@@ -315,6 +385,7 @@ const SignIn = ({ configData }) => {
                         variant="contained"
                         loading={isApiCalling}
                         sx={{ color: textColor }}
+                        id="recaptcha-container"
                       >
                         {t("Sign In")}
                       </LoadingButton>
@@ -335,6 +406,7 @@ const SignIn = ({ configData }) => {
                             </CustomTypography>
                             <SocialLogins
                               socialLogin={configData?.social_login}
+                              configData={configData}
                             />
                           </CustomStackFullWidth>
                         )}
@@ -379,9 +451,10 @@ const SignIn = ({ configData }) => {
         openModal={openOtpModal}
       >
         <OtpForm
-          data={otpData}
+          data={otpData ? otpData : loginFormik?.values?.phone}
           formSubmitHandler={otpFormSubmitHandler}
-          isLoading={isLoadingOtpVerifyApi}
+          isLoading={isLoadingOtpVerifyApi || fireIsLoading}
+          recaptcha="recaptcha-container"
         />
       </CustomModal>
     </>

@@ -4,7 +4,7 @@ import { Button, Card, Typography, useTheme } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useTranslation } from "react-i18next";
 import CustomTextFieldWithFormik from "../../form-fields/CustomTextFieldWithFormik";
-import PinDropIcon from '@mui/icons-material/PinDrop';
+import PinDropIcon from "@mui/icons-material/PinDrop";
 import GetLocationFrom from "./GetLocationFrom";
 import MapModal from "../../Map/MapModal";
 import CustomPhoneInput from "../../custom-component/CustomPhoneInput";
@@ -24,6 +24,7 @@ const ReceiverInfoFrom = ({
   receiverFormattedAddress,
   setReceiverFormattedAddress,
   setReceiverLocation,
+  receiverEmailHandler,
   configData,
 }) => {
   const { t } = useTranslation();
@@ -54,13 +55,19 @@ const ReceiverInfoFrom = ({
 
   useEffect(() => {
     roadHandler(
-      receiverOptionalAddress?.road ? receiverOptionalAddress?.road : ""
+      receiverOptionalAddress?.road
+        ? receiverOptionalAddress?.road
+        : addAddressFormik.values.road
     );
     floorHandler(
-      receiverOptionalAddress?.floor ? receiverOptionalAddress?.floor : ""
+      receiverOptionalAddress?.floor
+        ? receiverOptionalAddress?.floor
+        : addAddressFormik.values.floor
     );
     houseHandler(
-      receiverOptionalAddress?.house ? receiverOptionalAddress?.house : ""
+      receiverOptionalAddress?.house
+        ? receiverOptionalAddress?.house
+        : addAddressFormik.values.house
     );
   }, [receiverOptionalAddress]);
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
@@ -69,9 +76,11 @@ const ReceiverInfoFrom = ({
       <Card sx={{ padding: "1.2rem", height: "100%" }}>
         <CustomStackFullWidth spacing={2}>
           <Stack align="center">
-            <Typography fontWeight={500} fontSize="16px">{t("Receiver Information")}</Typography>
+            <Typography fontWeight={500} fontSize="16px">
+              {t("Receiver Information")}
+            </Typography>
           </Stack>
-          <CustomStackFullWidth alignItems="center" spacing={2}>
+          <CustomStackFullWidth alignItems="center" spacing={3}>
             <CustomStackFullWidth alignItems="center">
               <CustomTextFieldWithFormik
                 required="true"
@@ -84,6 +93,15 @@ const ReceiverInfoFrom = ({
                 value={addAddressFormik.values.receiverName}
               />
             </CustomStackFullWidth>
+            <CustomTextFieldWithFormik
+              required
+              label={t("Email")}
+              touched={addAddressFormik.touched.receiverEmail}
+              errors={addAddressFormik.errors.receiverEmail}
+              fieldProps={addAddressFormik.getFieldProps("receiverEmail")}
+              onChangeHandler={receiverEmailHandler}
+              value={addAddressFormik.values.receiverEmail}
+            />
             <CustomStackFullWidth alignItems="center">
               <CustomPhoneInput
                 value={addAddressFormik.values.receiverPhone}

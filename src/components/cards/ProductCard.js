@@ -124,10 +124,10 @@ export const CardWrapper = styled(Card)(
       `1px solid ${alpha(theme.palette.moduleTheme.food, 0.1)}`,
 
     "&:hover": {
-      boxShadow: ` 0px 10px 20px 0px ${alpha(
-        theme.palette.neutral[1000],
-        0.1
-      )}`,
+      boxShadow:
+        theme.palette.mode !== "dark"
+          ? ` 0px 10px 20px 0px ${alpha(theme.palette.neutral[1000], 0.1)}`
+          : "0px 10px 20px 0px rgba(88, 110, 125, 0.10)",
       img: {
         transform: "scale(1.05)",
       },
@@ -225,7 +225,6 @@ const ProductCard = (props) => {
     pharmaCommon,
     noRecommended,
   } = props;
-
   const [state, dispatch] = useReducer(reducer, initialState);
   const [openModal, setOpenModal] = React.useState(false);
   const [openLocationAlert, setOpenLocationAlert] = useState(false);
@@ -694,7 +693,7 @@ const ProductCard = (props) => {
       <CustomStackFullWidth
         justifyContent="space-between"
         alignItems="flex-start"
-        spacing={1.5}
+        spacing={1}
         p="1rem"
       >
         {isWishlisted && (
@@ -710,12 +709,23 @@ const ProductCard = (props) => {
           </Box>
         )}
 
-        <CustomBoxFullWidth sx={{ mt: "15px" }}>
-          <Body2 text={item?.store_name} />
-        </CustomBoxFullWidth>
         <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
           <H3 text={item?.name} />
         </PrimaryToolTip>
+        <CustomBoxFullWidth>
+          {item?.module_type === "pharmacy" ? (
+            <Typography
+              className={classes.singleLineEllipsis}
+              variant="body2"
+              color="text.secondary"
+              sx={{ wordBreak: "break-word" }}
+            >
+              {item?.generic_name[0]}
+            </Typography>
+          ) : (
+            <Body2 text={item?.store_name} />
+          )}
+        </CustomBoxFullWidth>
         {item?.unit_type ? (
           <Typography
             sx={{ color: (theme) => theme.palette.customColor.textGray }}
@@ -845,9 +855,31 @@ const ProductCard = (props) => {
         justifyContent="center"
         alignItems="center"
         spacing={0.6}
-        p="1rem"
+        p={item?.module_type === "pharmacy" ? "5px 16px 16px 16px" : "1rem"}
       >
-        <Body2 text={item?.store_name} />
+        {item?.module_type === "pharmacy" ? (
+          <Typography
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "1",
+              WebkitBoxOrient: "vertical",
+              width: "100%",
+              paddingTop: "3px",
+              maxWidth: "200px",
+              wordWrap: "break-word",
+            }}
+            variant="body2"
+            color="#93A2AE"
+            textAlign="center"
+          >
+            {item?.generic_name[0]}
+          </Typography>
+        ) : (
+          <Body2 text={item?.store_name} />
+        )}
+
         <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
           <Typography
             className={classes.singleLineEllipsis}
@@ -1122,6 +1154,25 @@ const ProductCard = (props) => {
               horizontalcard={horizontalcard}
               loveItem={loveItem}
             >
+              {item?.module?.module_type === "pharmacy" && (
+                <Stack
+                  width="100%"
+                  alignItems="center"
+                  justifyContent="center"
+                  padding={{ xs: "3px 3px 8px 3px", md: "3px 3px 3px 3px" }}
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#B3B3B399" : "#EDEDED99",
+                    color: theme.palette.neutral[1000],
+                    fontSize: "12px",
+                    zIndex: "999",
+                  }}
+                >
+                  {item?.store_name}
+                </Stack>
+              )}
               {handleBadge()}
               <CustomImageContainer
                 src={item?.image_full_url}
@@ -1139,7 +1190,6 @@ const ProductCard = (props) => {
               ) : (
                 ""
               )}
-
               <CustomOverLay hover={state.isTransformed} border_radius="10px">
                 <QuickView
                   quickViewHandleClick={quickViewHandleClick}

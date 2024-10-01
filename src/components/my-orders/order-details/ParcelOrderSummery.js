@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   alpha,
   Grid,
@@ -10,20 +11,23 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { Box } from "@mui/system";
+import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { t } from "i18next";
+import React, { useState } from "react";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
+import CustomModal from "../../modal";
+import nodata from "../assets/test.png";
+import OfflineOrderDenied from "./offline-order/OfflineOrderDenied";
+import OfflineOrderDetails from "./offline-order/OfflineOrderDetails";
+import OfflinePaymentEdit from "./offline-order/OfflinePaymentEdit";
 import SenderOrReceiverDetails from "./parcel-order/SenderOrReceiverDetails";
 import { SummeryShimmer } from "./parcel-order/Shimmers";
-import { getAmountWithSign } from "helper-functions/CardHelpers";
-import OfflinePaymentEdit from "./offline-order/OfflinePaymentEdit";
-import OfflineOrderDetails from "./offline-order/OfflineOrderDetails";
-import CustomModal from "../../modal";
-import OfflineOrderDenied from "./offline-order/OfflineOrderDenied";
-import nodata from "../assets/test.png";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CloseIcon from "@mui/icons-material/Close";
-import { getImageUrl } from "utils/CustomFunctions";
+import { useGetOrderCancelReason } from "api-manage/hooks/react-query/order/useGetAutomatedMessage";
+import ChatWithAdmin from "components/my-orders/order-details/other-order/ChatWithAdmin";
+import { getToken } from "helper-functions/getToken";
+import adminImage from "../../../../public/static/profile/fi_4460756 (1).png";
 
 export const ParcelOrderSummaryBox = styled(CustomStackFullWidth)(
   ({ theme }) => ({
@@ -45,6 +49,8 @@ const ParcelOrderSummery = ({
   refetchTrackOrder,
 }) => {
   const theme = useTheme();
+  const [openAdmin, setOpenAdmin] = useState(false);
+  const { data: automateMessageData } = useGetOrderCancelReason();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const [openOfflineDetails, setOpenOfflineDetails] = useState(false);
   const [openOfflineModal, setOpenOfflineModal] = useState(false);
@@ -78,6 +84,9 @@ const ParcelOrderSummery = ({
             name={data?.delivery_address?.contact_person_name}
             address={data?.delivery_address?.address}
             phone={data?.delivery_address?.contact_person_number}
+            house={data?.delivery_address?.house}
+            floor={data?.delivery_address?.floor}
+            road={data?.delivery_address?.road}
           />
           {!isSmall && (
             <Stack
@@ -95,6 +104,9 @@ const ParcelOrderSummery = ({
             name={data?.receiver_details?.contact_person_name}
             address={data?.receiver_details?.address}
             phone={`+${data?.receiver_details?.contact_person_number}`}
+            house={data?.receiver_details?.house}
+            floor={data?.receiver_details?.floor}
+            road={data?.receiver_details?.road}
           />
         </CustomStackFullWidth>
         <CustomStackFullWidth
@@ -103,8 +115,9 @@ const ParcelOrderSummery = ({
           pt="40px"
           pb={{ xs: "30px", md: "0" }}
           pl={{ xs: "6px", md: "0px" }}
+          overflow="hidden"
         >
-          <Stack spacing={1}>
+          <Box flexGrow="1" width="0">
             <Stack flexDirection="row" justifyContent="space-between">
               <Stack>
                 <Typography
@@ -200,7 +213,7 @@ const ParcelOrderSummery = ({
                 />
               </CustomModal>
             )}
-          </Stack>
+          </Box>
           {isSmall && (
             <Stack
               sx={{
@@ -208,11 +221,14 @@ const ParcelOrderSummery = ({
                   `2px solid ${alpha(theme.palette.neutral[400], 0.2)}`,
 
                 height: "64px",
-                paddingRight: "30px",
+                paddingRight: {
+                  xs: "6px",
+                  xl: "30px",
+                },
               }}
             ></Stack>
           )}
-          <Stack spacing={1}>
+          <Box flexGrow="1" width="0">
             <Typography fontSize={{ xs: "14px", md: "16px" }} fontWeight="500">
               {t("Charge Pay By")}
             </Typography>
@@ -230,7 +246,7 @@ const ParcelOrderSummery = ({
             ) : (
               <Skeleton width="100px" variant="text" />
             )}
-          </Stack>
+          </Box>
         </CustomStackFullWidth>
         {trackOrderData?.delivery_instruction && (
           <Stack spacing={1} pt={{ xs: "0px", md: "20px" }}>
@@ -414,7 +430,50 @@ const ParcelOrderSummery = ({
         ) : (
           <SummeryShimmer />
         )}
+        {getToken() && (
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="center"
+            mt="1.4rem"
+            alignItems="center"
+          >
+            <CustomImageContainer
+              src={adminImage.src}
+              width="35px"
+              height="35px"
+            />
+
+            <Typography
+              fontSize={{ xs: "14px", md: "16px" }}
+              fontWeight="500"
+              sx={{ cursor: "pointer" }}
+              onClick={() => setOpenAdmin(true)}
+            >
+              {t(`Massage to `)}
+              <Typography
+                component="span"
+                fontSize={{ xs: "14px", md: "16px" }}
+                fontWeight="500"
+                color="primary"
+                sx={{ cursor: "pointer", textDecoration: "underline" }}
+              >
+                {configData?.business_name}
+              </Typography>
+            </Typography>
+          </Stack>
+        )}
       </Grid>
+      <CustomModal
+        openModal={openAdmin}
+        handleClose={() => setOpenAdmin(false)}
+        closeButton
+      >
+        <ChatWithAdmin
+          automateMessageData={automateMessageData?.data}
+          orderID={trackOrderData?.id}
+        />
+      </CustomModal>
     </Grid>
   );
 };

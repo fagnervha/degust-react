@@ -20,7 +20,6 @@ import Body2 from "../typographies/Body2";
 import AddWithIncrementDecrement from "./AddWithIncrementDecrement";
 import { CustomOverLay } from "./Card.style";
 import QuickView, { PrimaryToolTip } from "./QuickView";
-import { getImageUrl } from "utils/CustomFunctions";
 
 const VegNonVegFlag = styled(Box)(({ theme, veg, rounded }) => ({
   height: "14px",
@@ -147,12 +146,12 @@ const SpecialCard = (props) => {
         padding: "10px",
         cursor: "pointer",
         background: (theme) => theme.palette.neutral[100],
-        boxShadow: (theme) =>
-          theme.palette.mode !== "dark"
-            ? "0px 30px 20px 0px rgba(0, 0, 0, 0.10)"
-            : "0px 30px 20px 0px rgba(88, 110, 125, 0.10)",
+        // boxShadow: (theme) =>
+        // 	theme.palette.mode !== "dark"
+        // 		? "0px 30px 20px 0px rgba(0, 0, 0, 0.10)"
+        // 		: "0px 30px 20px 0px rgba(88, 110, 125, 0.10)",
         borderRadius: "10px",
-        width: { xs: "190px", md: "230px" },
+        width: { xs: "auto", md: "230px" },
         height: "100%",
         "&:hover": {
           img: {
@@ -239,10 +238,10 @@ const SpecialCard = (props) => {
       </CustomStackFullWidth>
       <CustomBoxFullWidth sx={{ padding: "0px 5px 5px 5px" }}>
         <Grid container>
-          <Grid item xs={9.5} sm={9}>
+          <Grid item xs={9} sm={9}>
             <AmountWithDiscountedAmount item={item} />
           </Grid>
-          <Grid item xs={2.5} sm={3}>
+          <Grid item xs={3} sm={3}>
             <CustomRatingBox rating={item?.avg_rating} />
           </Grid>
         </Grid>

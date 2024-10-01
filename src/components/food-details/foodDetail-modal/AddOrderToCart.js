@@ -240,7 +240,7 @@ const AddOrderToCart = (props) => {
               <PrimaryButton
                 onClick={() => addToCard()}
                 loading={isLoading}
-                sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
+                sx={{ fontSize: { xs: "12px", md: "14px" } }}
               >
                 {isLoading ? (
                   <Stack

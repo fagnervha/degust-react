@@ -8,11 +8,13 @@ import {
   alpha,
   useMediaQuery,
   useTheme,
+  Button,
 } from "@mui/material";
+import adminImage from "../../../../../public/static/profile/fi_4460756 (1).png";
 import { Stack } from "@mui/system";
 import { FoodHalalHaram } from "components/cards/SpecialCard";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
-import { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import "simplebar-react/dist/simplebar.min.css";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { CustomTypographyEllipsis } from "styled-components/CustomTypographies.style";
@@ -30,6 +32,15 @@ import SingleOrderAttachment from "../singleOrderAttachment";
 import InstructionBox from "./InstructionBox";
 import OrderCalculation from "./OrderCalculation";
 import { getImageUrl } from "utils/CustomFunctions";
+import { WrapperForCustomDialogConfirm } from "components/custom-dialog/confirm/CustomDialogConfirm.style";
+import DialogTitle from "@mui/material/DialogTitle";
+import { t } from "i18next";
+import DialogContent from "@mui/material/DialogContent";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ChatWithAdmin from "components/my-orders/order-details/other-order/ChatWithAdmin";
+import { useGetOrderCancelReason } from "api-manage/hooks/react-query/order/useGetAutomatedMessage";
+import { getToken } from "helper-functions/getToken";
 
 const getAddOnsNames = (addOns) => {
   const names = addOns?.map(
@@ -58,6 +69,9 @@ const OrderSummery = (props) => {
   const [openOfflineDetails, setOpenOfflineDetails] = useState(false);
   const [openOfflineModal, setOpenOfflineModal] = useState(false);
   const [partialWithOffline, setPartialWithOffline] = useState(false);
+  const [openAdmin, setOpenAdmin] = useState(false);
+  const { data: automateMessageData } = useGetOrderCancelReason();
+
   useEffect(() => {
     if (trackOrderData?.offline_payment !== null) {
       setPartialWithOffline(true);
@@ -215,11 +229,11 @@ const OrderSummery = (props) => {
             >
               <CustomStackFullWidth
                 direction={{ xs: "column", md: "row" }}
-                spacing={2}
                 sx={{
                   flexWrap: "wrap",
                   justifyContent: "space-between",
                   padding: { xs: "0px , 20px", md: "0px 25px" },
+                  gap: { xs: "10px", md: "0px" },
                 }}
               >
                 <Stack spacing={1}>
@@ -377,27 +391,7 @@ const OrderSummery = (props) => {
                     }}
                   ></Stack>
                 )}
-                {trackOrderData?.unavailable_item_note && (
-                  <Stack spacing={1}>
-                    <Typography
-                      fontSize={{ xs: "14px", md: "16px" }}
-                      fontWeight="500"
-                      textTransform="capitalize"
-                    >
-                      {t("Unavailable item Note")}
-                    </Typography>
-                    <Typography
-                      fontSize={{ xs: "12px", md: "14px" }}
-                      fontWeight="400"
-                      color={theme.palette.neutral[500]}
-                      width="215px"
-                      lineHeight="25px"
-                      textTransform="capitalize"
-                    >
-                      {trackOrderData?.unavailable_item_note}
-                    </Typography>
-                  </Stack>
-                )}
+
                 {trackOrderData?.cutlery && (
                   <Stack
                     spacing={1}
@@ -431,6 +425,12 @@ const OrderSummery = (props) => {
               md={12}
               pl={{ xs: "0px", sm: "20px", md: "25px" }}
             >
+              {trackOrderData?.unavailable_item_note && (
+                <InstructionBox
+                  title="Unavailable item Note"
+                  note={trackOrderData?.unavailable_item_note}
+                />
+              )}
               {trackOrderData?.delivery_instruction && (
                 <InstructionBox
                   title="delivery instruction"
@@ -475,6 +475,39 @@ const OrderSummery = (props) => {
                 configData={configData}
               />
             )}
+            {getToken() && !data?.prescription_order && (
+              <Stack
+                direction="row"
+                spacing={1}
+                justifyContent="center"
+                mt="1.4rem"
+                alignItems="center"
+              >
+                <CustomImageContainer
+                  src={adminImage.src}
+                  width="35px"
+                  height="35px"
+                />
+
+                <Typography
+                  fontSize={{ xs: "14px", md: "16px" }}
+                  fontWeight="500"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => setOpenAdmin(true)}
+                >
+                  {t(`Massage to `)}
+                  <Typography
+                    component="span"
+                    fontSize={{ xs: "14px", md: "16px" }}
+                    fontWeight="500"
+                    color="primary"
+                    sx={{ cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    {configData?.business_name}
+                  </Typography>
+                </Typography>
+              </Stack>
+            )}
           </Grid>
         </Grid>
       )}
@@ -487,10 +520,20 @@ const OrderSummery = (props) => {
       {/*  removeFromWishlistHandler={removeFromWishlistHandler}*/}
       {/*  isWishlisted={isWishlisted}*/}
       {/*/>*/}
+      <CustomModal
+        openModal={openAdmin}
+        handleClose={() => setOpenAdmin(false)}
+        closeButton
+      >
+        <ChatWithAdmin
+          automateMessageData={automateMessageData?.data}
+          orderID={trackOrderData?.id}
+        />
+      </CustomModal>
     </>
   );
 };
 
 OrderSummery.propTypes = {};
 
-export default OrderSummery;
+export default memo(OrderSummery);

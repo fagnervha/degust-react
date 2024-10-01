@@ -58,7 +58,7 @@ const CustomHeader = ({ info }) => {
   );
 };
 const DetailsAndReviews = (props) => {
-  const { description, reviews, configData, productId } = props;
+  const { description, reviews, configData, productId, storename } = props;
   const { t } = useTranslation();
   const [tabs, setTabs] = useState(0);
   const [expanded, setExpanded] = useState(false);
@@ -141,6 +141,7 @@ const DetailsAndReviews = (props) => {
                 setOffSet={setOffSet}
                 page_limits={page_limits}
                 isExpanded="false"
+                storename={storename}
               />
             )}
           </Collapse>

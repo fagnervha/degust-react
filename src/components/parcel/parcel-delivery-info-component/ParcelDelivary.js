@@ -38,6 +38,7 @@ const PercelDelivery = ({ configData }) => {
   // if (typeof window !== undefined) {
   //   token = localStorage.getItem("token");
   // }
+
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
       positionOptions: {
@@ -56,20 +57,22 @@ const PercelDelivery = ({ configData }) => {
         ? parcelInfo?.senderName
         : "",
       senderPhone: token
-        ? parcelInfo?.senderPhone
-          ? parcelInfo?.senderPhone
-          : ""
-        : profileInfo?.phone
         ? profileInfo?.phone
+          ? profileInfo?.phone
+          : ""
+        : parcelInfo?.senderPhone
+        ? parcelInfo?.senderPhone
         : "",
+      senderEmail: parcelInfo?.senderEmail ? parcelInfo?.senderEmail : "",
       receiverName: parcelInfo?.receiverName ? parcelInfo?.receiverName : "",
       receiverPhone: parcelInfo?.receiverPhone ? parcelInfo?.receiverPhone : "",
-      senderRoad: "",
-      senderHouse: "",
-      senderFloor: "",
-      road: "",
-      house: "",
-      floor: "",
+      receiverEmail: parcelInfo?.receiverEmail ? parcelInfo?.receiverEmail : "",
+      senderRoad: parcelInfo?.senderRoad ? parcelInfo?.senderRoad : "",
+      senderHouse: parcelInfo?.senderHouse ? parcelInfo?.senderHouse : "",
+      senderFloor: parcelInfo?.senderFloor ? parcelInfo?.senderFloor : "",
+      road: parcelInfo?.road ? parcelInfo?.road : "",
+      house: parcelInfo?.house ? parcelInfo?.house : "",
+      floor: parcelInfo?.floor ? parcelInfo?.floor : "",
     },
     validationSchema: ValidationSchema(),
     onSubmit: async (values, helpers) => {
@@ -88,7 +91,7 @@ const PercelDelivery = ({ configData }) => {
   useEffect(() => {
     addAddressFormik.setFieldValue(
       "senderPhone",
-      profileInfo?.phone ? profileInfo?.phone : ""
+      profileInfo?.phone ? profileInfo?.phone : parcelInfo?.senderPhone
     );
   }, [profileInfo?.phone]);
   // useEffect(() => {
@@ -127,6 +130,21 @@ const PercelDelivery = ({ configData }) => {
     addAddressFormik.setFieldValue("senderFloor", value);
   };
 
+  const senderEmailHandler = (value) => {
+    addAddressFormik?.setFieldValue("senderEmail", value);
+  };
+  const handleSenderLocation = (location, currentLocation) => {
+    setSenderLocation(location);
+    setSenderFormattedAddress(currentLocation);
+  };
+  const handleReceiverLocation = (location, currentLocation) => {
+    setReceiverLocation(location);
+    setReceiverFormattedAddress(currentLocation);
+  };
+  const receiverEmailHandler = (value) => {
+    addAddressFormik?.setFieldValue("receiverEmail", value);
+  };
+
   const handleRoute = () => {
     router.push("/checkout?page=parcel", undefined, { shallow: true });
   };
@@ -139,7 +157,7 @@ const PercelDelivery = ({ configData }) => {
       receiverLocations: receiverLocation,
       receiverAddress: receiverFormattedAddress,
       name: parcelCategories?.name,
-      image: parcelCategories?.image,
+      image: parcelCategories?.image_full_url,
       description: parcelCategories?.description,
     };
     if (senderLocation && receiverLocation) {
@@ -164,14 +182,7 @@ const PercelDelivery = ({ configData }) => {
       toast.error(t("Sender or Receiver location is missing"));
     }
   };
-  const handleSenderLocation = (location, currentLocation) => {
-    setSenderLocation(location);
-    setSenderFormattedAddress(currentLocation);
-  };
-  const handleReceiverLocation = (location, currentLocation) => {
-    setReceiverLocation(location);
-    setReceiverFormattedAddress(currentLocation);
-  };
+
   return (
     <CustomStackFullWidth
       paddingBottom={{ xs: "20px", sm: "20px", md: "80px" }}
@@ -200,6 +211,7 @@ const PercelDelivery = ({ configData }) => {
               senderRoadHandler={senderRoadHandler}
               senderHouseHandler={senderHouseHandler}
               senderFloorHandler={senderFloorHandler}
+              senderEmailHandler={senderEmailHandler}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={4}>
@@ -216,6 +228,7 @@ const PercelDelivery = ({ configData }) => {
               setReceiverLocation={setReceiverLocation}
               setReceiverFormattedAddress={setReceiverFormattedAddress}
               configData={configData}
+              receiverEmailHandler={receiverEmailHandler}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={4}>

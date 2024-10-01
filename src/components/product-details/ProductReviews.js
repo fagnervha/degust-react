@@ -15,6 +15,7 @@ const ProductReviews = ({
   setOffSet,
   page_limits,
   isExpanded,
+  storename,
 }) => {
   const theme = useTheme();
   const SliderRef = useRef(null);
@@ -29,20 +30,21 @@ const ProductReviews = ({
                 key={review?.id}
                 review={review}
                 configData={configData}
+                storename={storename}
               />
             );
           })
         ) : (
           <>{isExpanded === "true" && t("No reviews found")}</>
         )}
-        {reviews?.length > 1 && (
-          <CustomPagination
-            total_size={total_size}
-            page_limit={page_limits}
-            offset={offSet}
-            setOffset={setOffSet}
-          />
-        )}
+        {/*{reviews?.length > 1 && (*/}
+        {/*  <CustomPagination*/}
+        {/*    total_size={total_size}*/}
+        {/*    page_limit={page_limits}*/}
+        {/*    offset={offSet}*/}
+        {/*    setOffset={setOffSet}*/}
+        {/*  />*/}
+        {/*)}*/}
       </CustomBoxFullWidth>
     </>
   );

@@ -46,6 +46,8 @@ import {
   setOrderInformation,
 } from "redux/slices/utils";
 import { setGuestUserOrderId } from "redux/slices/guestUserInfo";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const ParcelCheckout = () => {
   const theme = useTheme();
@@ -71,16 +73,49 @@ const ParcelCheckout = () => {
   const [currentZoneId, setCurrentZoneId] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [customerInstruction, setCustomerInstruction] = useState(null);
+  const [check, setCheck] = React.useState(null);
   const receiverLoacation = {
-    lat: parcelInfo?.receiverLocations?.lat,
-    lng: parcelInfo?.receiverLocations?.lng,
+    lat: parcelInfo?.senderLocations?.lat,
+    lng: parcelInfo?.senderLocations?.lng,
   };
+  const [guestUserEmail, setGuestUserEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const { data: zoneData } = useGetZoneId(receiverLoacation, zoneIdEnabled);
   const { data, refetch } = useGetDistance(
     parcelInfo?.senderLocations,
     parcelInfo?.receiverLocations
   );
 
+  const token = getToken();
+  const guest_id = getGuestId();
+  const formik = useFormik({
+    initialValues: {
+      password: "",
+      confirm_password: "",
+    },
+    validationSchema: Yup.object({
+      password: Yup.string()
+        .required(t("Password is required"))
+        .min(8, t("Password is too short - should be 8 chars minimum.")),
+      confirm_password: Yup.string()
+        .required(t("Confirm Password"))
+        .oneOf([Yup.ref("password"), null], t("Passwords must match")),
+    }),
+    // onSubmit: async (values, helpers) => {
+    //   console.log({ values });
+    //   try {
+    //     //formSubmitHandler(values);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // },
+  });
+  const passwordHandler = (value) => {
+    formik.setFieldValue("password", value);
+  };
+  const confirmPasswordHandler = (value) => {
+    formik.setFieldValue("confirm_password", value);
+  };
   const tempDistance = handleDistance(
     data?.rows?.[0]?.elements,
     {
@@ -185,7 +220,8 @@ const ParcelCheckout = () => {
   const receiverDetails = JSON.stringify({
     id: null,
     address_type: "others",
-    contact_person_number: parcelInfo?.receiverPhone,
+    contact_person_number: `+${parcelInfo?.receiverPhone}`,
+    contact_person_email: parcelInfo?.receiverEmail,
     address: parcelInfo?.receiverAddress,
     additional_address: null,
     latitude: parcelInfo?.receiverLocations?.lat,
@@ -224,12 +260,18 @@ const ParcelCheckout = () => {
     dm_tips: deliveryTip,
     guest_id: getGuestId(),
     contact_person_name: parcelInfo?.senderName,
-    contact_person_number: parcelInfo?.senderPhone,
+    contact_person_number: `+${parcelInfo?.senderPhone}`,
     delivery_instruction: customerInstruction,
     sender_zone_id: currentZoneId,
+    contact_person_email: parcelInfo?.senderEmail,
+    create_new_user: check ? 1 : 0,
+    password: formik.values.password,
+    is_guest: token ? 0 : 1,
+    road: parcelInfo?.senderRoad,
+    house: parcelInfo?.senderHouse,
+    floor: parcelInfo?.senderFloor,
   };
-  const token = getToken();
-  const guest_id = getGuestId();
+
   const { data: order, isLoading, mutate: orderMutation } = useOrderPlace();
 
   const orderPlace = () => {
@@ -258,7 +300,7 @@ const ParcelCheckout = () => {
             const url = `${baseUrl}/payment-mobile?order_id=${
               res?.order_id
             }&customer_id=${
-              profileInfo?.id ?? guest_id
+              profileInfo?.id ?? res?.user_id ? res?.user_id : guest_id
             }&payment_platform=${payment_platform}&callback=${callBackUrl}&payment_method=${paymentMethod}`;
             router.push(url, undefined, { shallow: true });
           } else if (paymentMethod === "wallet") {
@@ -356,6 +398,7 @@ const ParcelCheckout = () => {
         },
       });
     } else {
+      dispatch(setOrderDetailsModalOpen(true));
       if (paymentMethod === "cash_on_delivery") {
         const handleSuccess = (res) => {
           if (res) {
@@ -466,6 +509,17 @@ const ParcelCheckout = () => {
     : parcelDeliveryFree() +
       Number(deliveryTip) +
       (configData?.additional_charge ? configData?.additional_charge : 0);
+
+  const getParcelPayment = () => {
+    // Check if zoneData and zone_data are available
+    if (!zoneData?.zone_data) return [];
+
+    // Filter the items where module_type is "parcel"
+    return zoneData.zone_data.filter((item) =>
+      item?.modules?.find((module) => module?.module_type === "parcel")
+    );
+  };
+
   return (
     <>
       {method === "offline" ? (
@@ -507,6 +561,11 @@ const ParcelCheckout = () => {
                   deliveryInstruction={deliveryInstruction}
                   customerInstruction={customerInstruction}
                   setCustomerInstruction={setCustomerInstruction}
+                  check={check}
+                  setCheck={setCheck}
+                  formik={formik}
+                  passwordHandler={passwordHandler}
+                  confirmPasswordHandler={confirmPasswordHandler}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
@@ -604,6 +663,7 @@ const ParcelCheckout = () => {
                       storeZoneId={currentZoneId}
                       parcel="true"
                       offlinePaymentOptions={offlinePaymentOptions}
+                      getParcelPayment={getParcelPayment}
                     />
                   </CustomPaperBigCard>
                 )}

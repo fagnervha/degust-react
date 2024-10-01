@@ -142,6 +142,7 @@ const Testimonials = ({ isSmall, landingPageData }) => {
               variant={isSmall ? "h7" : "h4"}
               fontSize={{ xs: "17px", sm: "24px", md: "30px" }}
               fontWeight={500}
+              sx={{ opacity: ".9" }}
             >
               <DollarSignHighlighter
                 theme={theme}
@@ -156,10 +157,18 @@ const Testimonials = ({ isSmall, landingPageData }) => {
               textAlign: "center",
             }}
           >
-            <Box sx={{ display: "block", position: "relative" }}>
+            <Box
+              sx={{ display: "block", position: "relative" }}
+              className={"testimonials-slider"}
+            >
               <Box sx={{ gap: "35px" }}>
                 <Box className="slider-wrapper">
-                  <Slider asNavFor={nav2} ref={(e) => setNav1(e)} {...setting}>
+                  <Slider
+                    asNavFor={nav2}
+                    ref={(e) => setNav1(e)}
+                    {...setting}
+                    rtl={landingPageData?.direction === "rtl"}
+                  >
                     {testimonials?.map((item, i) => (
                       <>
                         {item?.status === 1 && (
@@ -168,6 +177,7 @@ const Testimonials = ({ isSmall, landingPageData }) => {
                             key={i}
                             indexState={indexState}
                             currentIndex={i}
+                            lanDirection={lanDirection}
                           />
                         )}
                       </>
@@ -178,9 +188,14 @@ const Testimonials = ({ isSmall, landingPageData }) => {
                   asNavFor={nav1}
                   ref={(e) => setNav2(e)}
                   {...textSliderSettings}
+                  rtl={landingPageData?.direction === "rtl"}
                 >
                   {testimonials.map((item, i) => (
-                    <TestimonialSlideText {...item} key={i} />
+                    <TestimonialSlideText
+                      {...item}
+                      key={i}
+                      lanDirection={lanDirection}
+                    />
                   ))}
                 </Slider>
               </Box>
@@ -192,7 +207,7 @@ const Testimonials = ({ isSmall, landingPageData }) => {
   );
 };
 export const TestimonialSlideImage = (props) => {
-  const { img, indexState, currentIndex } = props;
+  const { img, indexState, currentIndex, lanDirection } = props;
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   return (
@@ -205,6 +220,7 @@ export const TestimonialSlideImage = (props) => {
           maxWidth: "140px",
           aspectRatio: "1",
           margin: "2px auto",
+          direction: lanDirection,
         }}
       >
         <Box
@@ -239,7 +255,7 @@ export const TestimonialSlideImage = (props) => {
 
 export const TestimonialSlideText = (props) => {
   const theme = useTheme();
-  const { name, designation, review, activeState, index } = props;
+  const { name, designation, review, activeState, index, lanDirection } = props;
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Box
@@ -252,7 +268,12 @@ export const TestimonialSlideText = (props) => {
       }`}
       sx={{ marginTop: "30px" }}
     >
-      <Stack className="content" spacing={3} alignItems="center">
+      <Stack
+        className="content"
+        spacing={3}
+        alignItems="center"
+        sx={{ direction: lanDirection }}
+      >
         {review && (
           <Typography
             fontSize={{ xs: "12px", md: "18px" }}

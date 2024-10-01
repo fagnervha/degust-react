@@ -1,13 +1,13 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
-import { Skeleton, Typography, useTheme } from "@mui/material";
+import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
+import { alpha, Skeleton, Typography, useTheme } from "@mui/material";
 import { Stack } from "@mui/system";
 import VariationsManager from "./VariationsManager";
 import IncrementDecrementManager from "./IncrementDecrementManager";
 import ProductInformationBottomSection from "./ProductInformationBottomSection";
 
 import { ACTION, initialState, reducer } from "./states";
-import { setCart, setCartList } from "../../../redux/slices/cart";
+import { setCart, setCartList } from "redux/slices/cart";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../../modal";
@@ -22,21 +22,21 @@ import {
   out_of_stock,
   product_update_to_cart_message,
   update_error_text,
-} from "../../../utils/toasterMessages";
-import { useAddToWishlist } from "../../../api-manage/hooks/react-query/wish-list/useAddWishList";
-import { addWishList } from "../../../redux/slices/wishList";
+} from "utils/toasterMessages";
+import { useAddToWishlist } from "api-manage/hooks/react-query/wish-list/useAddWishList";
+import { addWishList } from "redux/slices/wishList";
 import CustomRatings from "../../search/CustomRatings";
-import { getCartListModuleWise } from "../../../helper-functions/getCartListModuleWise";
+import { getCartListModuleWise } from "helper-functions/getCartListModuleWise";
 import Link from "next/link";
-import { getModuleId } from "../../../helper-functions/getModuleId";
+import { getModuleId } from "helper-functions/getModuleId";
 import PricePreviewWithStock from "./PricePreviewWithStock";
 import { useTranslation } from "react-i18next";
 import InStockTag from "../InStockTag";
 import CategoryInformation from "../CategoryInformation";
 import { ReadMore } from "../../ReadMore";
 import useAddCartItem from "../../../api-manage/hooks/react-query/add-cart/useAddCartItem";
-import { getGuestId } from "../../../helper-functions/getToken";
-import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
+import { getGuestId } from "helper-functions/getToken";
+import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import useCartItemUpdate from "../../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
 import { useRouter } from "next/router";
 import SimpleBar from "simplebar-react";
@@ -375,6 +375,16 @@ const ProductInformation = ({
         ) : (
           <Skeleton width={100} variant="text" />
         )}
+        {state.modalData[0]?.generic_name[0] && (
+          <Typography
+            fontSize={{ xs: "12px", sm: "12px" }}
+            fontWeight="400"
+            color="customColor.textGray"
+          >
+            {state.modalData[0]?.generic_name[0]}
+          </Typography>
+        )}
+
         {state.modalData[0]?.isCampaignItem ? null : (
           <Stack direction="row" alignItems="center" spacing={1}>
             <Stack direction="row" alignItems="base-line" spacing={0.5}>
@@ -384,7 +394,7 @@ const ProductInformation = ({
                 color={theme.palette.warning.main}
               />
               <Typography fontWeight="700" fontSize="12px">
-                ({state.modalData[0]?.avg_rating.toFixed(1)})
+                ({state.modalData[0]?.avg_rating?.toFixed(1)})
               </Typography>
             </Stack>
             <Typography color="customColor.textGray">|</Typography>
@@ -418,6 +428,50 @@ const ProductInformation = ({
             {state?.modalData.length > 0 && state.modalData[0]?.description}
           </ReadMore>
         ) : null}
+        {state?.modalData[0]?.nutritions_name?.length > 0 && (
+          <>
+            <Typography fontSize="14px" fontWeight="500" mt="5px">
+              {t("Nutrition Details")}
+            </Typography>
+
+            <Stack direction="row" spacing={0.5}>
+              {state?.modalData[0]?.nutritions_name?.map((item, index) => (
+                <Typography
+                  fontSize="12px"
+                  key={index}
+                  color={theme.palette.neutral[400]}
+                >
+                  {item}
+                  {index !== state?.modalData[0]?.nutritions_name.length - 1
+                    ? ","
+                    : "."}
+                </Typography>
+              ))}
+            </Stack>
+          </>
+        )}
+        {state?.modalData[0]?.allergies_name?.length > 0 && (
+          <>
+            <Typography fontSize="14px" fontWeight="500" mt="5px">
+              {t("Allergic Ingredients")}
+            </Typography>
+
+            <Stack direction="row" spacing={0.5}>
+              {state?.modalData[0]?.allergies_name?.map((item, index) => (
+                <Typography
+                  fontSize="12px"
+                  key={index}
+                  color={theme.palette.neutral[400]}
+                >
+                  {item}
+                  {index !== state?.modalData[0]?.allergies_name.length - 1
+                    ? ","
+                    : "."}
+                </Typography>
+              ))}
+            </Stack>
+          </>
+        )}
       </CustomStackFullWidth>
     );
   };

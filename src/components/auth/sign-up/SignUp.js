@@ -15,8 +15,11 @@ import {
   onSingleErrorResponse,
 } from "api-manage/api-error-response/ErrorResponses";
 import { useSignUp } from "api-manage/hooks/react-query/auth/useSignUp";
+import { useFireBaseOtpVerify } from "api-manage/hooks/react-query/forgot-password/useFIreBaseOtpVerify";
 import { useVerifyPhone } from "api-manage/hooks/react-query/forgot-password/useVerifyPhone";
 import useGetProfile from "api-manage/hooks/react-query/profile/useGetProfile";
+import { auth } from "firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useFormik } from "formik";
 import { getGuestId } from "helper-functions/getToken";
 import Link from "next/link";
@@ -24,6 +27,7 @@ import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "redux/slices/profileInfo";
+import { setWelcomeModal } from "redux/slices/utils";
 import { setDefaultLanguage } from "utils/setDefaultLanguage";
 import { signup_successfull } from "utils/toasterMessages";
 import { ModuleSelection } from "../../landing-page/hero-section/module-selection";
@@ -31,10 +35,6 @@ import CustomModal from "../../modal";
 import AcceptTermsAndConditions from "../AcceptTermsAndConditions";
 import OtpForm from "./OtpForm";
 import SignUpValidation from "./SignUpValidation";
-import { setWelcomeModal } from "redux/slices/utils";
-// import CustomModal from "../../modal";
-// import OtpForm from "./OtpForm";
-// import { useVerifyPhone } from "../../../api-manage/hooks/auth/useVerifyPhone";
 
 const SignUp = ({ configData }) => {
   const router = useRouter();
@@ -47,7 +47,11 @@ const SignUp = ({ configData }) => {
   const [openOtpModal, setOpenOtpModal] = useState(false);
   //const [welcomeModal, setWelcomeModal] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [verificationId, setVerificationId] = useState(null);
   const guestId = getGuestId();
+  // const { sendOTP, verificationId, isOtpSent } = useFirebasePhoneAuth();
+  const { mutate: fireBaseOtpMutation, isLoading: fireIsLoading } =
+    useFireBaseOtpVerify();
   const signUpFormik = useFormik({
     initialValues: {
       f_name: "",
@@ -66,7 +70,42 @@ const SignUp = ({ configData }) => {
       } catch (err) {}
     },
   });
+  const setUpRecaptcha = () => {
+    // Check if reCAPTCHA is already initialized
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("Recaptcha verified", response);
+          },
+          "expired-callback": () => {
+            window.recaptchaVerifier?.reset();
+          },
+        },
+        auth
+      );
+    } else {
+      // Only reset without re-initializing
+      window.recaptchaVerifier?.reset();
+    }
+  };
 
+  const sendOTP = () => {
+    setUpRecaptcha();
+    const phoneNumber = signUpFormik?.values?.phone;
+    // country code
+    const appVerifier = window.recaptchaVerifier;
+    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+      .then((confirmationResult) => {
+        setVerificationId(confirmationResult.verificationId);
+        setOtpData({ phone: phoneNumber });
+      })
+      .catch((error) => {
+        console.log("Error in sending OTP", error);
+      });
+  };
   const handleClose = () => {
     setOpenOtpModal(false);
   };
@@ -160,11 +199,21 @@ const SignUp = ({ configData }) => {
       onSuccess: async (response) => {
         setDefaultLanguage();
         if (configData?.customer_verification) {
-          if (Number.parseInt(response?.is_phone_verified) === 1) {
-            handleTokenAfterSignUp(response);
+          if (configData?.firebase_otp_verification === 1) {
+            if (Number.parseInt(response?.is_phone_verified) === 1) {
+              await handleTokenAfterSignUp(response);
+            } else {
+              //
+              await sendOTP();
+              setMainToken(response);
+            }
           } else {
-            setOtpData({ phone: values?.phone });
-            setMainToken(response);
+            if (Number.parseInt(response?.is_phone_verified) === 1) {
+              handleTokenAfterSignUp(response);
+            } else {
+              setOtpData({ phone: values?.phone });
+              setMainToken(response);
+            }
           }
         } else {
           handleTokenAfterSignUp(response);
@@ -185,10 +234,22 @@ const SignUp = ({ configData }) => {
       setOpenOtpModal(false);
       handleTokenAfterSignUp(mainToken);
     };
-    otpVerifyMutate(values, {
-      onSuccess: onSuccessHandler,
-      onError: onSingleErrorResponse,
-    });
+    if (configData?.firebase_otp_verification === 1) {
+      const temValue = {
+        phoneNumber: values?.phone,
+        sessionInfo: verificationId,
+        code: values?.reset_token,
+      };
+      fireBaseOtpMutation(temValue, {
+        onSuccess: onSuccessHandler,
+        onError: onErrorResponse,
+      });
+    } else {
+      otpVerifyMutate(values, {
+        onSuccess: onSuccessHandler,
+        onError: onSingleErrorResponse,
+      });
+    }
   };
 
   return (
@@ -198,7 +259,7 @@ const SignUp = ({ configData }) => {
         alignItems="center"
         pb="80px"
       >
-        <Box maxWidth="500px" width="100%">
+        <Box maxWidth="500px" width="100%" mt={{ xs: "0rem", md: "1rem" }}>
           <CustomPaperBigCard>
             <CustomStackFullWidth
               // justifyContent="center"
@@ -231,6 +292,7 @@ const SignUp = ({ configData }) => {
                       variant="contained"
                       loading={isLoading}
                       disabled={!signUpFormik.values.tandc}
+                      id="recaptcha-container"
                     >
                       {t("Sign Up")}
                     </LoadingButton>
@@ -269,7 +331,7 @@ const SignUp = ({ configData }) => {
           <OtpForm
             data={otpData}
             formSubmitHandler={otpFormSubmitHandler}
-            isLoading={isLoadingOtpVerifyApi}
+            isLoading={isLoadingOtpVerifyApi || fireIsLoading}
           />
         </CustomModal>
       </CustomStackFullWidth>

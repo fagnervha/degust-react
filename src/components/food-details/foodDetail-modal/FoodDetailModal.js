@@ -861,7 +861,12 @@ const FoodDetailModal = ({
 
   return (
     <>
-      <Modal open={open} onClose={handleModalClose} disableAutoFocus={true}>
+      <Modal
+        open={open}
+        onClose={handleModalClose}
+        disableAutoFocus={true}
+        sx={{ top: { xs: "-20%" } }}
+      >
         <FoodDetailModalStyle
           sx={{ bgcolor: "background.paper" }}
           foodmodal="true"

@@ -1,39 +1,39 @@
-import React, { useEffect, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  alpha,
   Button,
   IconButton,
   Skeleton,
   Typography,
+  alpha,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import moment from "moment";
-import { OrderStatusButton } from "../myorders.style";
-import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { Stack } from "@mui/system";
-import TrackSvg from "../assets/TrackSvg";
-import Link from "next/link";
-import { useQuery } from "react-query";
-import { GoogleApi } from "api-manage/hooks/react-query/googleApi";
-import DigitalPaymentManage from "./DigitalPaymentManage";
-import CustomModal from "../../modal";
-import CancelOrder from "./CenacelOrder";
-import usePostOrderCancel from "../../../api-manage/hooks/react-query/order/usePostOrderCancel";
-import toast from "react-hot-toast";
-import { useGetOrderCancelReason } from "api-manage/hooks/react-query/order/useGetOrderCancelReason";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
-import PaymentUpdate from "./other-order/PaymentUpdate";
-import OfflineOrderDetailsModal from "./offline-order/OfflineOrderDetailsModal";
+import { GoogleApi } from "api-manage/hooks/react-query/googleApi";
+import { useGetOrderCancelReason } from "api-manage/hooks/react-query/order/useGetOrderCancelReason";
+import { hasChatAndReview } from "components/my-orders/order-details/other-order/StoreDetails";
+import { getGuestId, getToken } from "helper-functions/getToken";
+import moment from "moment";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearOfflinePaymentInfo,
   setOrderDetailsModal,
 } from "redux/slices/offlinePaymentData";
-import CloseIcon from "@mui/icons-material/Close";
-import { getGuestId, getToken } from "helper-functions/getToken";
-import { hasChatAndReview } from "components/my-orders/order-details/other-order/StoreDetails";
+import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
+import usePostOrderCancel from "../../../api-manage/hooks/react-query/order/usePostOrderCancel";
+import CustomModal from "../../modal";
+import TrackSvg from "../assets/TrackSvg";
+import { OrderStatusButton } from "../myorders.style";
+import CancelOrder from "./CenacelOrder";
+import DigitalPaymentManage from "./DigitalPaymentManage";
+import OfflineOrderDetailsModal from "./offline-order/OfflineOrderDetailsModal";
+import PaymentUpdate from "./other-order/PaymentUpdate";
 
 const TopDetails = (props) => {
   const {
@@ -192,7 +192,13 @@ const TopDetails = (props) => {
     dispatch(setOrderDetailsModal(false));
     setOpenModelOffline(false);
   };
-
+  const capitalizeText = (text) => {
+    if (!text) return "";
+    return text
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
   return (
     // <HeadingBox>
     <CustomStackFullWidth
@@ -204,8 +210,10 @@ const TopDetails = (props) => {
         sm: "30px 20px 20px 25px",
         md: "30px 20px 20px 25px",
       }}
+      rowGap="10px"
+      flexWrap="wrap"
     >
-      <Stack spacing={{ xs: 1, md: 1 }}>
+      <Stack spacing={{ xs: 1, md: 1 }} flexGrow="1">
         {dataIsLoading ? (
           <Skeleton variant="text" width="150px" />
         ) : (
@@ -234,7 +242,7 @@ const TopDetails = (props) => {
                 fontWeight: "600",
               }}
             >
-              {trackData?.order_status?.replace(/_/g, " ")}
+              {t(capitalizeText(trackData?.order_status))}
             </Typography>
             <Typography
               component="span"
@@ -249,7 +257,7 @@ const TopDetails = (props) => {
                 fontWeight: "600",
               }}
             >
-              {trackData?.order_type?.replace("_", " ")}
+              {t(capitalizeText(trackData?.order_type))}
             </Typography>
           </Typography>
         )}
@@ -420,6 +428,7 @@ const TopDetails = (props) => {
                 background={theme.palette.error.deepLight}
                 onClick={() => setCancelOpenModal(true)}
                 // color={theme.palette.whiteContainer}
+                // sx={{ marginInlineStart: "auto" }}
               >
                 {t("Cancel Order")}
               </OrderStatusButton>

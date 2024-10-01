@@ -19,6 +19,8 @@ const PaymentMethod = ({
   usePartialPayment,
   setPaymentMethodImage,
   setSwitchToWallet,
+  isZoneDigital,
+  getParcelPayment,
 }) => {
   return (
     <CustomStackFullWidth spacing={2} p={parcel === "true" ? "0px" : "25px"}>
@@ -35,6 +37,7 @@ const PaymentMethod = ({
           isLoading={isLoading}
           offlinePaymentOptions={offlinePaymentOptions}
           setPaymentMethodImage={setPaymentMethodImage}
+          getParcelPayment={getParcelPayment}
         />
       ) : (
         <OtherModulePayment
@@ -49,6 +52,7 @@ const PaymentMethod = ({
           offlinePaymentOptions={offlinePaymentOptions}
           setPaymentMethodImage={setPaymentMethodImage}
           setSwitchToWallet={setSwitchToWallet}
+          isZoneDigital={isZoneDigital}
         />
       )}
     </CustomStackFullWidth>

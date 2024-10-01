@@ -31,7 +31,7 @@ const StoreAndDeliveryManCommon = ({
         )}
       </Grid>
       <Grid item md={8} sm={8} xs={10.8} alignSelf="center">
-        <Typography fontWeight="800" fontSize={{ xs: "14px", md: "22px" }}>
+        <Typography fontWeight="600" fontSize={{ xs: "14px", md: "20px" }}>
           {data && data?.name ? data?.name : data?.f_name}
         </Typography>
         <Stack direction="row" alignItems="center">
@@ -50,7 +50,7 @@ const StoreAndDeliveryManCommon = ({
             ml="9px"
             paddingLeft="9px"
             sx={{
-              textDecoration: "underLine",
+              //textDecoration: "underLine",
               borderLeft: "2px solid",
               borderColor: (theme) => alpha(theme.palette.neutral[400], 0.4),
               color: (theme) => alpha(theme.palette.neutral[600], 0.9),

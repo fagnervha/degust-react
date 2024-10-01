@@ -86,9 +86,6 @@ const PopularInTheStore = ({ id, storeShare }) => {
 
   useEffect(() => {
     refetchCommonCondition();
-  }, []);
-
-  useEffect(() => {
     refetch();
   }, []);
 

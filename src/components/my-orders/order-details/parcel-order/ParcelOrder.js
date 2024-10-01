@@ -1,32 +1,21 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import { useTheme } from "@emotion/react";
+import { Grid, Skeleton, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/system";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
 import {
   CustomPaperBigCard,
   CustomStackFullWidth,
 } from "../../../../styled-components/CustomStyles.style";
-import {
-  HeadingBox,
-  OrderStatusBox,
-  OrderStatusGrid,
-} from "../../myorders.style";
-import { alpha, Divider, Grid, Skeleton, Typography } from "@mui/material";
-import { CustomTypography } from "../../../landing-page/hero-section/HeroSection.style";
-import CustomFormatedDateTime from "../../../date/CustomFormatedDateTime";
-import { useTranslation } from "react-i18next";
-import ParcelOrderTopDetails from "./ParcelOrderTopDetails";
-import { Box, Stack } from "@mui/system";
-import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
-import RefundDetails from "../other-order/RefundDetails";
-import StoreDetails from "../other-order/StoreDetails";
-import OrderSummery from "../other-order/OrderSummery";
-import { useTheme } from "@emotion/react";
 import CustomImageContainer from "../../../CustomImageContainer";
-import useGetTrackOrderData from "../../../../api-manage/hooks/react-query/order/useGetTrackOrderData";
+import { OrderStatusBox, OrderStatusGrid } from "../../myorders.style";
 import OrderDetailsBottom from "../other-order/OrderDetailsBottom";
 import PaymentUpdate from "../other-order/PaymentUpdate";
+import RefundDetails from "../other-order/RefundDetails";
 import RefundModal from "../other-order/RefundModal";
+import ParcelOrderTopDetails from "./ParcelOrderTopDetails";
 import { DetailsShimmer, SummeryShimmer } from "./Shimmers";
-import { getImageUrl } from "utils/CustomFunctions";
 
 const ParcelOrder = (props) => {
   const { configData, data, trackOrderData, id, refetchTrackOrder, refetch } =
