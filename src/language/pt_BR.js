@@ -1041,7 +1041,7 @@ export const portuguese = {
   "Sort by : High to Low": "Sort by : High to Low",
   "Sort by : Low to High": "Sort by : Low to High",
   "Popular Tags": "Popular Tags",
-  Brands: "Brands",
+  Brands: "Marcos",
   bonus: "bonus",
   "1k+ km": "1k+ km",
   km: "km",
@@ -1119,7 +1119,7 @@ export const portuguese = {
   "No Flash Sales Product Found!": "No Flash Sales Product Found!",
   "Internal server error": "Internal server error",
   "Try to ": "Try to ",
-  "refresh ": "refresh ",
+  "refresh ": "atualizar ",
   "this page or go back to previous page":
     "this page or go back to previous page",
   "Go Back": "Voltar",

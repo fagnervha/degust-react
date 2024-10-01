@@ -215,14 +215,14 @@ export const settings = {
     {
       breakpoint: 450,
       settings: {
-        slidesToShow: 1.6,
+        slidesToShow: 1.8,
         slidesToScroll: 1,
       },
     },
     {
       breakpoint: 400,
       settings: {
-        slidesToShow: 1.5,
+        slidesToShow: 1.6,
         slidesToScroll: 1,
       },
     },
