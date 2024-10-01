@@ -8,6 +8,8 @@ import StoreDetails from "../../../src/components/store-details";
 import { config_api, store_details_api } from "api-manage/ApiRoutes";
 import SEO from "../../../src/components/seo";
 import { NoSsr } from "@mui/material";
+import scrollToTop from "components/ScrollToTop";
+import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 
 const Index = ({ configData, storeDetails, landingPageData }) => {
   const dispatch = useDispatch();
@@ -19,7 +21,6 @@ const Index = ({ configData, storeDetails, landingPageData }) => {
   const metaImage =
     storeDetails?.meta_image_full_url ?? storeDetails.cover_photo_full_url;
   const [isSSR, setIsSSR] = useState(true);
-
   const initialSet = () => {
     const stores = [];
     stores.push(storeDetails);
@@ -43,7 +44,6 @@ const Index = ({ configData, storeDetails, landingPageData }) => {
       initialSet();
     }
   };
-
   useEffect(() => {
     //setIsSSR(false);
     if (storeDetails) {
