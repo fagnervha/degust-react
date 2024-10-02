@@ -31,29 +31,29 @@ const background = {
 const divider = "#E6E8F0";
 
 const primary = {
-  main: "#039D55",
+  main: "#fe5900",
   deep: "#026034",
   light: "#EBFDF2",
   dark: "#1c6641",
-  semiLight: "#E4FFF3",
+  semiLight: "#FE8600",
   contrastText: "#FFFFFF",
   customType1: "#0DCB72",
   customType2: "#3BB77E",
   customType3: "#29CE00",
   overLay: "#000000",
   lite: "rgba(3, 157, 85, 0.1)",
-  icon: "#039D55",
+  icon: "#fe5900",
 };
 const moduleTheme = {
-  pharmacy: "#039D55",
-  ecommerce: "#039D55",
-  food: "#039D55",
-  parcel: "#039D55",
+  pharmacy: "#fe5900",
+  ecommerce: "#fe5900",
+  food: "#fe5900",
+  parcel: "#fe5900",
 };
 const horizontalCardBG = "#E4FFF3";
 
 const secondary = {
-  main: "#10B981",
+  main: "#FE8600",
   light: "#3FC79A",
   dark: "#0B815A",
   contrastText: "#FFFFFF",
