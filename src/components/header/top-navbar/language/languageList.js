@@ -1,8 +1,6 @@
 import brFlag from "./assets/brasil.svg";
 import usFlag from "./assets/us.svg";
-import arabicFlag from "./assets/arabic-flag-svg.svg";
-import spain from "./assets/spain.png";
-import bangladesh from "./assets/bangladesh.png";
+
 export const languageList = [
   {
     languageName: "Português",
@@ -21,12 +19,6 @@ export const languageList = [
   //   languageCode: "es",
   //   countryCode: "es",
   //   countryFlag: spain.src,
-  // },
-  //{
-  //  languageName: "Arabic",
-  //  languageCode: "ar",
-  //  countryCode: "SA",
-  //  countryFlag: arabicFlag.src,
   // },
   // {
   //   languageName: "Bengali",

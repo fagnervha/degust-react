@@ -628,7 +628,7 @@ const Top = (props) => {
                     <Grid item xs={2} align="right">
                       {!isInWishList(storeDetails?.id) && (
                         <Tooltip
-                          title={"Add to wishlist"}
+                          title={t("Add to wishlist")}
                           arrow
                           placement={"bottom"}
                         >

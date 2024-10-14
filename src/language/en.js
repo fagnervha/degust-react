@@ -1113,6 +1113,7 @@ export const english = {
   "Complete Multipurpose": "Complete Multipurpose",
   eBusiness: "eBusiness",
   Solution: "Solution",
+  parcel: "parcel",
   "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
     "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.",
   "Featured Store": "Featured Store",
@@ -1202,13 +1203,14 @@ export const english = {
   Remove: "Remove",
   "View My Orders": "View My Orders",
   "OR SHARE": "OR SHARE",
+  "Enter Amount": "Enter Amount",
   "Hey there welcome to ": "Hey there welcome to ",
   "If you're checking out": "If you're checking out",
   "for the first time, make sure to use the referral code":
     "for the first time, make sure to use the referral code",
   "when you sign up. It's my way of welcoming you to this awesome e-commerce platform! Happy shopping on":
     "when you sign up. It's my way of welcoming you to this awesome e-commerce platform! Happy shopping on",
-  "Hey there welcome to": "Hey there welcome to",
+  // "Hey there welcome to": "Hey there welcome to",
   "Someone just used  your code !": "Someone just used  your code !",
   "Be prepare to receive when they complete there first purchase":
     "Be prepare to receive when they complete there first purchase",

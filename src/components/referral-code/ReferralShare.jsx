@@ -78,13 +78,13 @@ const ReferralShare = ({ referralCode, horizontal, size }) => {
   const companyName = configData?.business_name;
   const pinId = "patwary6am";
   useEffect(() => {
-    const code_url = `
-        ${companyName}
-        Referral code=${referralCode}
-        ${window.location.origin}`;
+    const code_url = `${companyName} 
+      Referral code=${referralCode} 
+      ${window.location.origin}/auth/sign-in`;
 
     setCurrentUrl(code_url);
-  }, []);
+  }, [companyName, referralCode]);
+
   const shareUrl = `${t("Hey there welcome to")} ${companyName}! ${t(
     "If you're checking out"
   )} ${companyName} ${t(

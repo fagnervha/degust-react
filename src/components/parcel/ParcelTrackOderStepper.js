@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Stack, styled } from "@mui/system";
 import moment from "moment";
+import { t } from "i18next";
 const StepperStyled = styled(Stepper)(({ theme }) => ({
   "& .MuiStepConnector-root ": {
     "& .MuiStepConnector-line": {
@@ -52,7 +53,7 @@ const ParcelTrackOderStepper = ({ steps, activeStep }) => {
           <StepLabel>
             <Stack direction="row" justifyContent="space-between">
               <Typography fontSize="12px" fontWeight="400">
-                {step?.label}
+                {t(step?.label)}
               </Typography>
               <Typography fontSize="12px">
                 {step?.time && moment(step?.time).format("D MMM, h:mm A")}

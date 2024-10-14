@@ -91,7 +91,7 @@ const Menus = (props) => {
             }}
             key={index}
             onClick={() => handleTabChange(index, item)}
-            label={item?.label ? item?.label : item}
+            label={t(item?.label ? item?.label : item)}
             value={t(item?.value ? item?.value : item)}
           />
         );

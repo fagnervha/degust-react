@@ -43,7 +43,6 @@ const primary = {
   main: "#039D55",
   light: "#909BEF",
   dark: "#1c6641",
-  deep: "#026034",
   contrastText: neutral[900],
   semiLight: "#E4FFF3",
   overLay: "#000000",
