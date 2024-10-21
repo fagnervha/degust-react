@@ -110,7 +110,6 @@ const ReferralShare = ({ referralCode, horizontal, size }) => {
         <WhatsappShareButton
           url={shareUrl}
           separator=":: "
-          title={title}
           quote={shareUrl}
         >
           <WhatsappIcon size={size ? size : 40} round />

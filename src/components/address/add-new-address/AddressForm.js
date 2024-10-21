@@ -292,7 +292,17 @@ const AddressForm = ({
               />
             </Grid>
           )}
-
+          <Grid item xs={12} md={6}>
+            <CustomTextFieldWithFormik
+              type="text"
+              label={t("Road")}
+              touched={addAddressFormik.touched.road}
+              errors={addAddressFormik.errors.road}
+              fieldProps={addAddressFormik.getFieldProps("road")}
+              onChangeHandler={roadHandler}
+              value={addAddressFormik.values.road}
+            />
+          </Grid>
           <Grid item xs={12} md={6}>
             <CustomTextFieldWithFormik
               type="text"
@@ -304,7 +314,8 @@ const AddressForm = ({
               value={addAddressFormik.values.house}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+
+          <Grid item xs={12}  md={token ? "12" : "6"}>
             <CustomTextFieldWithFormik
               type="text"
               label={t("Floor")}
@@ -315,17 +326,7 @@ const AddressForm = ({
               value={addAddressFormik.values.floor}
             />
           </Grid>
-          <Grid item xs={12} md={token ? "12" : "6"}>
-            <CustomTextFieldWithFormik
-              type="text"
-              label={t("Road")}
-              touched={addAddressFormik.touched.road}
-              errors={addAddressFormik.errors.road}
-              fieldProps={addAddressFormik.getFieldProps("road")}
-              onChangeHandler={roadHandler}
-              value={addAddressFormik.values.road}
-            />
-          </Grid>
+
           <Grid item xs={12} md={12}>
             <CustomTextFieldWithFormik
               type="text"

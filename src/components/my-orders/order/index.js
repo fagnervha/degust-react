@@ -232,7 +232,7 @@ const Order = (props) => {
                 }}
               >
                 <Chip
-                  label={order?.module_type}
+                  label={t("parcel")}
                   color="primary"
                   style={{
                     borderRadius: "2px",

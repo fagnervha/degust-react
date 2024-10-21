@@ -2,6 +2,8 @@ export const english = {
   "Valid till": "Valid till",
   get: "get",
   Sold: "Sold",
+  "is closed":"is closed",
+  "Try again later.":"Try again later.",
   "Allergic Ingredients": "Allergic Ingredients",
   "Nutrition Details": "Nutrition Details",
   "Create account with exiting info.": "Create account with exiting info.",
@@ -1114,6 +1116,8 @@ export const english = {
   eBusiness: "eBusiness",
   Solution: "Solution",
   parcel: "parcel",
+  Parcel: "Parcel",
+
   "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
     "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.",
   "Featured Store": "Featured Store",

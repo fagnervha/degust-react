@@ -174,7 +174,7 @@ const TrackOrder = ({ configData, trackOrderData }) => {
       setActStep(2);
     } else if (
       trackOrderData?.order_status === "processing" ||
-      trackOrderData?.order_status === "handover"
+      trackOrderData?.order_status === "handover" || trackOrderData?.order_status==="prepared"
     ) {
       setActStep(3);
     } else if (trackOrderData?.order_status === "picked_up") {

@@ -241,7 +241,7 @@ const ParcelOrderSummery = ({
                 lineHeight="25px"
                 textTransform="capitalize"
               >
-                {data?.charge_payer}
+                {t(data?.charge_payer)}
               </Typography>
             ) : (
               <Skeleton width="100px" variant="text" />
