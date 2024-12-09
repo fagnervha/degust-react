@@ -78,13 +78,13 @@ const ReferralShare = ({ referralCode, horizontal, size }) => {
   const companyName = configData?.business_name;
   const pinId = "patwary6am";
   useEffect(() => {
-    const code_url = `${companyName} 
-      Referral code=${referralCode} 
-      ${window.location.origin}/auth/sign-in`;
+    const code_url = `
+        ${companyName}
+        Referral code=${referralCode}
+        ${window.location.origin}`;
 
     setCurrentUrl(code_url);
-  }, [companyName, referralCode]);
-
+  }, []);
   const shareUrl = `${t("Hey there welcome to")} ${companyName}! ${t(
     "If you're checking out"
   )} ${companyName} ${t(
@@ -110,6 +110,7 @@ const ReferralShare = ({ referralCode, horizontal, size }) => {
         <WhatsappShareButton
           url={shareUrl}
           separator=":: "
+          title={title}
           quote={shareUrl}
         >
           <WhatsappIcon size={size ? size : 40} round />
@@ -210,23 +211,6 @@ const ReferralShare = ({ referralCode, horizontal, size }) => {
                 <LineShareButton url={shareUrl} title={title}>
                   <LineIcon size={size ? size : 40} round />
                 </LineShareButton>
-                {/* <WeiboShareButton
-                            url={shareUrl}
-                            image={`${String(window.location)}/${pImg}`}
-                        >
-                            <WeiboIcon size={size ? size : 40} round />
-                        </WeiboShareButton> */}
-                {/* <InstapaperShareButton url={String(window.location.origin)} title={title} description={shareUrl}>
-                                <InstapaperIcon size={size ? size : 40} round />
-                            </InstapaperShareButton>
-                            <HatenaShareButton
-                                url={String(window.location.origin)}
-                                title={shareUrl}
-                                windowWidth={660}
-                                windowHeight={460}
-                            >
-                                <HatenaIcon size={size ? size : 40} round />
-                            </HatenaShareButton> */}
               </Slider>
             </SliderCustom>
             <CodePreviewWrapper
